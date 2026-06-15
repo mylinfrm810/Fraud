@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fraud — Service Status</title>
+  <meta name="description" content="Real-time availability and performance across the Fraud platform." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:      #08090a;
+      --surface: #0d0e10;
+      --card:    #111214;
+      --border:  #1c1d20;
+      --accent:  #7c6fff;
+      --text:    #f0f0f4;
+      --muted:   #5e6070;
+      --sans:    'Inter', system-ui, -apple-system, sans-serif;
+      --green:   #3ba55c;
+      --yellow:  #f0b429;
+      --red:     #ed4245;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px;
+      opacity: 0.035;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5vw;
+      height: 58px;
+      background: rgba(8,9,10,0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -.2px;
+    }
+    .nav-logo-mark {
+      width: 26px; height: 26px;
+      background: var(--accent);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .nav-sub {
+      font-size: .78rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-left: .15rem;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.8rem;
+      list-style: none;
+      align-items: center;
+    }
+    .nav-links a {
+      font-size: .85rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color .18s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-cta {
+      background: var(--text) !important;
+      color: var(--bg) !important;
+      padding: .4rem .95rem !important;
+      border-radius: 999px !important;
+      font-size: .8rem !important;
+      font-weight: 600 !important;
+      transition: opacity .18s !important;
+    }
+    .nav-cta:hover { opacity: .85 !important; }
+
+    /* HERO */
+    .hero {
+      padding: 9rem 5vw 5rem;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.15;
+      margin-bottom: .6rem;
+    }
+    .hero h1 strong { color: var(--accent); font-weight: 800; }
+    .hero p {
+      font-size: .95rem;
+      color: var(--muted);
+      max-width: 52ch;
+      margin: 0 auto 2.2rem;
+    }
+    .overall-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      padding: .55rem 1.2rem;
+      border-radius: 999px;
+      font-size: .88rem;
+      font-weight: 600;
+      border: 1px solid;
+    }
+    .overall-badge.operational {
+      background: rgba(59,165,92,.12);
+      border-color: rgba(59,165,92,.3);
+      color: #3ba55c;
+    }
+    .overall-badge.degraded {
+      background: rgba(240,180,41,.1);
+      border-color: rgba(240,180,41,.3);
+      color: var(--yellow);
+    }
+    .overall-badge.outage {
+      background: rgba(237,66,69,.1);
+      border-color: rgba(237,66,69,.3);
+      color: var(--red);
+    }
+    .badge-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .4; }
+    }
+
+    /* CONTENT */
+    .content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 5vw 8rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* SERVICE GROUP */
+    .service-group {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1.2rem;
+    }
+    .group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .group-title {
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .group-status {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      font-size: .8rem;
+      font-weight: 600;
+    }
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .status-dot.green  { background: var(--green); }
+    .status-dot.yellow { background: var(--yellow); }
+    .status-dot.red    { background: var(--red); }
+    .status-label.green  { color: var(--green); }
+    .status-label.yellow { color: var(--yellow); }
+    .status-label.red    { color: var(--red); }
+
+    /* SERVICE ROW */
+    .service-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .78rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+    }
+    .service-row:last-child { border-bottom: none; }
+    .service-row:hover { background: rgba(255,255,255,.02); }
+    .service-info {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+    }
+    .service-icon {
+      font-size: 1rem;
+      line-height: 1;
+      width: 22px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .service-name {
+      font-size: .88rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .service-right {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .service-tag {
+      font-size: .75rem;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .service-tag.green  { color: var(--green); }
+    .service-tag.yellow { color: var(--yellow); }
+    .service-tag.red    { color: var(--red); }
+    .row-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .row-dot.green  { background: var(--green); }
+    .row-dot.yellow { background: var(--yellow); }
+    .row-dot.red    { background: var(--red); }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 5vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+    footer p { font-size: .78rem; color: var(--muted); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { font-size: .78rem; color: var(--muted); transition: color .18s; }
+    .footer-links a:hover { color: var(--text); }
+
+    @media (max-width: 640px) {
+      .nav-links li:not(:last-child) { display: none; }
+      .group-header { flex-direction: column; align-items: flex-start; gap: .5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-mark">F</div>
+    Fraud
+    <span class="nav-sub">/ status</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#features">Features</a></li>
+    <li><a href="index.html#commands">Commands</a></li>
+    <li>
+      <a href="https://discord.com/oauth2/authorize?client_id=1515920241631297646&permissions=8&integration_type=0&scope=bot+applications.commands" class="nav-cta">
+        Add to Discord
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1><strong>Fraud</strong> service status</h1>
+  <p>Real-time availability and performance across the Fraud platform.</p>
+  <span class="overall-badge operational">
+    <span class="badge-dot"></span>
+    All systems operational
+  </span>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- Core Infrastructure -->
+  <div class="service-group">
+    <div class="group-header">
+      <span class="group-title">Core Infrastructure</span>
+      <span class="group-status">
+        <span class="status-dot green"></span>
+        <span class="status-label green">Operational</span>
+      </span>
+    </div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🤖</span>
+        <span class="service-name">Bot Gateway</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Online</span>
+        <span class="row-dot green"></span>
+      </div>
+    </div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🗄️</span>
+        <span class="service-name">Data Storage</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Fast</span>
+        <span class="row-dot green"></span>
+      </div>
+    </div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">⚡</span>
+        <span class="service-name">Command Handler</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Fast</span>
+        <span class="row-dot green"></span>
+      </div>
+    </div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🌐</span>
+        <span class="service-name">Hosting</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Stable</span>
+        <span class="row-dot green"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Platform Services -->
+  <div class="service-group">
+    <div class="group-header">
+      <span class="group-title">Platform Services</span>
+      <span class="group-status">
+        <span class="status-dot green"></span>
+        <span class="status-label green">Operational</span>
+      </span>
+    </div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🛡️</span>
+        <span class="service-name">Moderation</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
+    </div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">💰</span>
+        <span class="service-name">Economy</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
+    </div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🎟️</span>
+        <span class="service-name">Tickets</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
+    </div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🖼️</span>
+        <span class="service-name">GIF / Image API</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
+    </div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">📊</span>
+        <span class="service-name">Leveling</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Platform Integrations -->
+  <div class="service-group">
+    <div class="group-header">
+      <span class="group-title">Platform Integrations</span>
+      <span class="group-status">
+        <span class="status-dot green"></span>
+        <span class="status-label green">Operational</span>
+      </span>
+    </div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🟠</span>
+        <span class="service-name">Roblox</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
+    </div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🔒</span>
+        <span class="service-name">Anti-Nuke / Anti-Raid</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
+    </div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">💍</span>
+        <span class="service-name">Marriage</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
+    </div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🎲</span>
+        <span class="service-name">Gambling</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
+    </div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🌡️</span>
+        <span class="service-name">Weather</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Stable</span>
+        <span class="row-dot green"></span>
+      </div>
+    </div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">😂</span>
+        <span class="service-name">Meme / Reddit API</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Stable</span>
+        <span class="row-dot green"></span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 Fraud — Built by @rpjq with discord.py</p>
+  <div class="footer-links">
+    <a href="https://github.com/mylinfrm810/Fraud">GitHub</a>
+    <a href="https://discord.gg/Xwsg7M2BNa">Support Server</a>
+    <a href="index.html">Home</a>
+  </div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.05 });
+
+  document.querySelectorAll('.service-group').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity .4s ease, transform .4s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
