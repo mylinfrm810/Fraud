@@ -7,24 +7,33 @@
   <meta name="description" content="A powerful Discord bot with moderation, economy, gambling, tickets, anti-nuke and more. Free. Fast. Yours." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    /* ── TOKENS ─────────────────────────────────────────── */
+    /* ── TOKENS ──────────────────────────────────────────── */
     :root {
-      --bg:       #0d0f14;
-      --surface:  #13161e;
-      --card:     #1a1e2b;
-      --border:   #252a3a;
-      --accent:   #7c6fff;
-      --accent2:  #ff6bcd;
-      --green:    #3ba55c;
-      --text:     #e8eaf0;
-      --muted:    #7b82a0;
-      --mono:     'Space Mono', monospace;
-      --sans:     'Space Grotesk', sans-serif;
+      --bg:      #08090a;
+      --surface: #0d0e10;
+      --card:    #111214;
+      --border:  #1c1d20;
+      --accent:  #7c6fff;
+      --text:    #f0f0f4;
+      --muted:   #5e6070;
+      --sans:    'Inter', system-ui, -apple-system, sans-serif;
     }
 
-    /* ── RESET ──────────────────────────────────────────── */
+    /* ── NOISE OVERLAY ───────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px;
+      opacity: 0.035;
+    }
+
+    /* ── RESET ───────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
@@ -34,11 +43,12 @@
       font-size: 16px;
       line-height: 1.6;
       overflow-x: hidden;
+      position: relative;
     }
     a { color: inherit; text-decoration: none; }
     img { display: block; max-width: 100%; }
 
-    /* ── NAV ────────────────────────────────────────────── */
+    /* ── NAV ─────────────────────────────────────────────── */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -47,43 +57,56 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 5vw;
-      height: 64px;
-      background: rgba(13,15,20,0.85);
-      backdrop-filter: blur(14px);
+      height: 58px;
+      background: rgba(8,9,10,0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
     }
     .nav-logo {
-      font-family: var(--mono);
-      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      font-size: .95rem;
       font-weight: 700;
       color: var(--text);
-      letter-spacing: -0.5px;
+      letter-spacing: -.2px;
     }
-    .nav-logo span { color: var(--accent); }
+    .nav-logo-mark {
+      width: 26px; height: 26px;
+      background: var(--accent);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
     .nav-links {
       display: flex;
-      gap: 2rem;
+      gap: 1.8rem;
       list-style: none;
+      align-items: center;
     }
     .nav-links a {
-      font-size: 0.88rem;
+      font-size: .85rem;
       font-weight: 500;
       color: var(--muted);
-      transition: color .2s;
+      transition: color .18s;
     }
     .nav-links a:hover { color: var(--text); }
     .nav-cta {
-      background: var(--accent);
-      color: #fff !important;
-      padding: .45rem 1.1rem;
-      border-radius: 6px;
-      font-size: 0.85rem !important;
+      background: var(--text) !important;
+      color: var(--bg) !important;
+      padding: .4rem .95rem !important;
+      border-radius: 999px !important;
+      font-size: .8rem !important;
       font-weight: 600 !important;
-      transition: opacity .2s !important;
+      transition: opacity .18s !important;
     }
-    .nav-cta:hover { opacity: .85; color: #fff !important; }
+    .nav-cta:hover { opacity: .85 !important; }
 
-    /* ── HERO ───────────────────────────────────────────── */
+    /* ── HERO ────────────────────────────────────────────── */
     .hero {
       min-height: 100vh;
       display: flex;
@@ -91,318 +114,273 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 6rem 5vw 4rem;
+      padding: 9rem 5vw 7rem;
       position: relative;
-      overflow: hidden;
-    }
-    .hero-glow {
-      position: absolute;
-      width: 700px; height: 700px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(124,111,255,0.15) 0%, transparent 70%);
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
+      z-index: 1;
     }
     .hero-badge {
       display: inline-flex;
       align-items: center;
-      gap: .45rem;
-      background: rgba(124,111,255,.12);
-      border: 1px solid rgba(124,111,255,.3);
-      color: var(--accent);
-      font-size: .78rem;
-      font-weight: 600;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      padding: .35rem .9rem;
+      gap: .4rem;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.09);
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .04em;
+      padding: .28rem .8rem;
       border-radius: 999px;
-      margin-bottom: 1.6rem;
+      margin-bottom: 2.6rem;
     }
-    .hero-badge::before {
-      content: '';
-      width: 7px; height: 7px;
+    .badge-dot {
+      width: 6px; height: 6px;
       border-radius: 50%;
-      background: var(--green);
+      background: #3ba55c;
       animation: pulse 2s infinite;
     }
     @keyframes pulse {
       0%, 100% { opacity: 1; }
-      50% { opacity: .4; }
+      50% { opacity: .35; }
     }
     .hero h1 {
-      font-size: clamp(2.6rem, 6vw, 5rem);
-      font-weight: 700;
-      letter-spacing: -2px;
-      line-height: 1.05;
-      margin-bottom: 1.4rem;
-      max-width: 14ch;
+      font-size: clamp(3rem, 7vw, 5.8rem);
+      font-weight: 800;
+      letter-spacing: -3.5px;
+      line-height: 1.03;
+      margin-bottom: 1.8rem;
+      max-width: 15ch;
+      color: var(--text);
     }
-    .hero h1 .grad {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .hero h1 .accent-underline {
+      position: relative;
+      white-space: nowrap;
+    }
+    .hero h1 .accent-underline::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      bottom: -.08em;
+      height: .09em;
+      background: var(--accent);
+      border-radius: 999px;
     }
     .hero p {
-      font-size: 1.15rem;
+      font-size: 1.08rem;
       color: var(--muted);
       max-width: 44ch;
-      margin-bottom: 2.4rem;
+      margin-bottom: 3rem;
+      line-height: 1.72;
     }
     .hero-btns {
       display: flex;
-      gap: 1rem;
+      gap: .7rem;
       flex-wrap: wrap;
       justify-content: center;
     }
+
+    /* ── BUTTONS ─────────────────────────────────────────── */
     .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
       background: var(--accent);
       color: #fff;
-      padding: .75rem 1.8rem;
-      border-radius: 8px;
+      padding: .7rem 1.5rem;
+      border-radius: 999px;
       font-weight: 600;
-      font-size: 1rem;
-      transition: transform .15s, box-shadow .15s;
-      box-shadow: 0 0 24px rgba(124,111,255,.35);
+      font-size: .92rem;
+      transition: transform .14s, box-shadow .14s, opacity .14s;
+      box-shadow: 0 0 30px rgba(124,111,255,.25);
     }
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 0 36px rgba(124,111,255,.55);
+      box-shadow: 0 0 44px rgba(124,111,255,.45);
+      opacity: .94;
     }
     .btn-secondary {
-      background: var(--card);
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: rgba(255,255,255,.055);
       color: var(--text);
-      padding: .75rem 1.8rem;
-      border-radius: 8px;
+      padding: .7rem 1.5rem;
+      border-radius: 999px;
       font-weight: 600;
-      font-size: 1rem;
-      border: 1px solid var(--border);
-      transition: border-color .2s, background .2s;
+      font-size: .92rem;
+      border: 1px solid rgba(255,255,255,.1);
+      transition: background .18s, border-color .18s;
     }
     .btn-secondary:hover {
-      border-color: var(--accent);
-      background: rgba(124,111,255,.08);
+      background: rgba(255,255,255,.09);
+      border-color: rgba(255,255,255,.18);
     }
 
-    /* ── TERMINAL ───────────────────────────────────────── */
-    .terminal-wrap {
-      margin-top: 4rem;
-      width: 100%;
-      max-width: 620px;
+    /* ── STATS LINE ──────────────────────────────────────── */
+    .stats-wrap {
+      text-align: center;
+      padding: 4.5rem 5vw 3rem;
+      border-top: 1px solid var(--border);
       position: relative;
       z-index: 1;
     }
-    .terminal {
-      background: #0a0b10;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      text-align: left;
-      box-shadow: 0 24px 60px rgba(0,0,0,.6);
-    }
-    .term-bar {
-      background: #16181f;
-      padding: .7rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .term-dot { width: 12px; height: 12px; border-radius: 50%; }
-    .term-dot.r { background: #ff5f57; }
-    .term-dot.y { background: #febc2e; }
-    .term-dot.g { background: #28c840; }
-    .term-title {
-      margin-left: .5rem;
-      font-family: var(--mono);
-      font-size: .75rem;
+    .stats-line {
+      font-size: .98rem;
       color: var(--muted);
     }
-    .term-body {
-      padding: 1.2rem 1.4rem;
-      font-family: var(--mono);
-      font-size: .85rem;
-      line-height: 1.8;
-      min-height: 160px;
-    }
-    .term-line { display: flex; gap: .5rem; }
-    .term-prefix { color: var(--accent2); }
-    .term-cmd    { color: var(--text); }
-    .term-output { color: var(--green); padding-left: 1.3rem; }
-    .term-cursor {
-      display: inline-block;
-      width: 8px; height: 1em;
-      background: var(--accent);
-      animation: blink .9s step-end infinite;
-      vertical-align: text-bottom;
-    }
-    @keyframes blink { 50% { opacity: 0; } }
+    .stats-line strong { color: var(--text); font-weight: 700; }
 
-    /* ── STATS BAR ──────────────────────────────────────── */
-    .stats {
+    /* ── SERVER SHOWCASE ─────────────────────────────────── */
+    .servers-row {
       display: flex;
       justify-content: center;
+      gap: 3rem;
+      margin-top: 2.6rem;
       flex-wrap: wrap;
-      gap: 0;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      background: var(--surface);
     }
-    .stat-item {
-      flex: 1;
-      min-width: 150px;
-      text-align: center;
-      padding: 2rem 1rem;
-      border-right: 1px solid var(--border);
+    .server-card {
+      display: flex;
+      align-items: center;
+      gap: .85rem;
     }
-    .stat-item:last-child { border-right: none; }
-    .stat-num {
-      font-family: var(--mono);
-      font-size: 2rem;
-      font-weight: 700;
+    .server-avatar {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+    .server-name {
+      font-size: .88rem;
+      font-weight: 600;
       color: var(--text);
-      display: block;
+      line-height: 1.25;
     }
-    .stat-label {
-      font-size: .8rem;
+    .server-count {
+      font-size: .76rem;
       color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .07em;
-      margin-top: .2rem;
+      margin-top: .08rem;
     }
 
-    /* ── FEATURES ───────────────────────────────────────── */
-    section { padding: 6rem 5vw; }
+    /* ── SECTIONS ────────────────────────────────────────── */
+    section { padding: 8rem 5vw; position: relative; z-index: 1; }
     .section-eyebrow {
-      font-family: var(--mono);
-      font-size: .75rem;
-      letter-spacing: .12em;
+      font-size: .7rem;
+      letter-spacing: .14em;
       text-transform: uppercase;
       color: var(--accent);
-      margin-bottom: .8rem;
+      font-weight: 600;
+      margin-bottom: .75rem;
     }
     .section-title {
-      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-      font-weight: 700;
-      letter-spacing: -1px;
-      line-height: 1.15;
+      font-size: clamp(1.9rem, 3.5vw, 2.9rem);
+      font-weight: 800;
+      letter-spacing: -1.8px;
+      line-height: 1.1;
       margin-bottom: 1rem;
     }
     .section-sub {
       color: var(--muted);
-      font-size: 1.05rem;
-      max-width: 50ch;
-      margin-bottom: 3rem;
+      font-size: .98rem;
+      max-width: 46ch;
+      margin-bottom: 3.8rem;
+      line-height: 1.72;
     }
+
+    /* ── FEATURE CARDS ───────────────────────────────────── */
     .features-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.2rem;
+      gap: 1rem;
     }
     .feat-card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.6rem;
+      border-radius: 16px;
+      padding: 1.9rem;
       transition: border-color .2s, transform .2s;
-      position: relative;
-      overflow: hidden;
     }
-    .feat-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      transition: opacity .3s;
-      border-radius: 12px;
+    .feat-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(124,111,255,.3);
     }
-    .feat-card:hover { transform: translateY(-3px); border-color: var(--accent); }
-    .feat-card:hover::before { opacity: 1; }
-    .feat-icon {
-      font-size: 1.8rem;
-      margin-bottom: .9rem;
-      line-height: 1;
-    }
-    .feat-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin-bottom: .5rem;
-    }
-    .feat-desc { font-size: .9rem; color: var(--muted); line-height: 1.55; }
+    .feat-icon { font-size: 1.55rem; margin-bottom: 1rem; line-height: 1; }
+    .feat-title { font-size: .96rem; font-weight: 600; margin-bottom: .4rem; }
+    .feat-desc { font-size: .86rem; color: var(--muted); line-height: 1.62; }
 
-    /* ── COMMANDS PREVIEW ───────────────────────────────── */
+    /* ── COMMANDS ────────────────────────────────────────── */
     .commands-section { background: var(--surface); }
     .cmd-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: .7rem;
+      grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+      gap: .55rem;
     }
     .cmd-pill {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 10px;
       padding: .65rem 1rem;
       display: flex;
       align-items: center;
       gap: .6rem;
-      transition: border-color .2s;
+      transition: border-color .18s;
     }
-    .cmd-pill:hover { border-color: var(--accent); }
+    .cmd-pill:hover { border-color: rgba(124,111,255,.35); }
     .cmd-name {
-      font-family: var(--mono);
-      font-size: .82rem;
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: .79rem;
       color: var(--accent);
       white-space: nowrap;
     }
-    .cmd-info { font-size: .8rem; color: var(--muted); }
-
-    /* ── SETUP STEPS ────────────────────────────────────── */
-    .steps { display: flex; flex-direction: column; gap: 1.5rem; max-width: 640px; }
-    .step {
-      display: flex;
-      gap: 1.2rem;
-      align-items: flex-start;
+    .cmd-info { font-size: .77rem; color: var(--muted); }
+    code {
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: .79rem;
+      background: rgba(124,111,255,.1);
+      color: var(--accent);
+      padding: .1rem .38rem;
+      border-radius: 5px;
     }
+
+    /* ── SETUP STEPS ─────────────────────────────────────── */
+    .steps { display: flex; flex-direction: column; gap: 1.8rem; max-width: 600px; }
+    .step { display: flex; gap: 1.2rem; align-items: flex-start; }
     .step-num {
-      font-family: var(--mono);
-      font-size: .85rem;
+      font-size: .8rem;
       font-weight: 700;
       color: var(--accent);
-      background: rgba(124,111,255,.12);
-      border: 1px solid rgba(124,111,255,.3);
-      border-radius: 8px;
+      background: rgba(124,111,255,.1);
+      border: 1px solid rgba(124,111,255,.22);
+      border-radius: 10px;
       width: 36px; height: 36px;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
-    .step-text strong { display: block; font-size: .95rem; margin-bottom: .2rem; }
-    .step-text span { font-size: .88rem; color: var(--muted); }
-    code {
-      font-family: var(--mono);
-      font-size: .82rem;
-      background: rgba(124,111,255,.1);
-      color: var(--accent);
-      padding: .1rem .4rem;
-      border-radius: 4px;
+    .step-text strong {
+      display: block;
+      font-size: .94rem;
+      font-weight: 600;
+      margin-bottom: .25rem;
     }
+    .step-text span { font-size: .86rem; color: var(--muted); line-height: 1.65; }
 
-    /* ── CTA BANNER ─────────────────────────────────────── */
+    /* ── CTA BANNER ──────────────────────────────────────── */
     .cta-banner {
       text-align: center;
-      background: linear-gradient(135deg, rgba(124,111,255,.12), rgba(255,107,205,.08));
       border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+      padding: 8rem 5vw;
+      z-index: 1;
     }
     .cta-banner h2 {
-      font-size: clamp(1.6rem, 3vw, 2.4rem);
-      font-weight: 700;
-      letter-spacing: -1px;
+      font-size: clamp(1.9rem, 3.5vw, 2.9rem);
+      font-weight: 800;
+      letter-spacing: -1.8px;
       margin-bottom: .8rem;
     }
-    .cta-banner p { color: var(--muted); margin-bottom: 2rem; }
+    .cta-banner p { color: var(--muted); margin-bottom: 2.4rem; font-size: .98rem; }
 
-    /* ── FOOTER ─────────────────────────────────────────── */
+    /* ── FOOTER ──────────────────────────────────────────── */
     footer {
       padding: 2rem 5vw;
       border-top: 1px solid var(--border);
@@ -411,17 +389,20 @@
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 1rem;
+      position: relative;
+      z-index: 1;
     }
-    footer p { font-size: .82rem; color: var(--muted); }
+    footer p { font-size: .78rem; color: var(--muted); }
     .footer-links { display: flex; gap: 1.5rem; }
-    .footer-links a { font-size: .82rem; color: var(--muted); transition: color .2s; }
+    .footer-links a { font-size: .78rem; color: var(--muted); transition: color .18s; }
     .footer-links a:hover { color: var(--text); }
 
-    /* ── RESPONSIVE ─────────────────────────────────────── */
-    @media (max-width: 600px) {
-      .nav-links { display: none; }
-      .stat-item { min-width: 120px; }
-      .hero h1 { letter-spacing: -1px; }
+    /* ── RESPONSIVE ──────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .nav-links li:not(:last-child) { display: none; }
+      .hero h1 { letter-spacing: -1.8px; }
+      .servers-row { gap: 1.6rem; }
+      section { padding: 5.5rem 5vw; }
     }
   </style>
 </head>
@@ -429,59 +410,81 @@
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">$<span>Fraud - Made by @rpjq</span></div>
+  <div class="nav-logo">
+    <div class="nav-logo-mark">F</div>
+    Fraud
+  </div>
   <ul class="nav-links">
     <li><a href="#features">Features</a></li>
-    <li><a href="#commands">Commands</a></li>
+    <li><a href="commands.html">Commands</a></li>
     <li><a href="#setup">Setup</a></li>
-    <li><a href="https://discord.com/oauth2/authorize?client_id=1515920241631297646&permissions=8&integration_type=0&scope=bot+applications.commands" class="nav-cta">Add to Discord</a></li>
+    <li><a href="status.html">Status</a></li>
+    <li>
+      <a href="https://discord.com/oauth2/authorize?client_id=1515920241631297646&permissions=8&integration_type=0&scope=bot+applications.commands" class="nav-cta">
+        Add to Discord
+      </a>
+    </li>
   </ul>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-glow"></div>
-  <div class="hero-badge">Online &amp; Ready</div>
-  <h1>The bot your<br/><span class="grad">server deserves.</span></h1>
-  <p>Moderation, economy, gambling, tickets, anti-nuke — all in one bot with the <code>$</code> prefix.</p>
-  <div class="hero-btns">
-    <a href="https://discord.com/developers/applications" class="btn-primary">Add to Discord →</a>
-    <a href="#features" class="btn-secondary">See Features</a>
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    Online &amp; Ready
   </div>
-
-  <!-- Animated Terminal -->
-  <div class="terminal-wrap">
-    <div class="terminal">
-      <div class="term-bar">
-        <span class="term-dot r"></span>
-        <span class="term-dot y"></span>
-        <span class="term-dot g"></span>
-        <span class="term-title">#general</span>
-      </div>
-      <div class="term-body" id="terminal-body">
-        <!-- filled by JS -->
-      </div>
-    </div>
+  <h1>The bot your server<br/><span class="accent-underline">actually deserves.</span></h1>
+  <p>Moderation, economy, gambling, tickets, anti-nuke — all in one bot. Free, fast, and built for your community.</p>
+  <div class="hero-btns">
+    <a href="https://discord.com/oauth2/authorize?client_id=1515920241631297646&permissions=8&integration_type=0&scope=bot+applications.commands" class="btn-primary">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.001.022.015.04.032.05a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+      </svg>
+      Invite to Discord
+    </a>
+    <a href="#features" class="btn-secondary">
+      Explore features
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </a>
   </div>
 </section>
 
-<!-- STATS -->
-<div class="stats">
-  <div class="stat-item">
-    <span class="stat-num">150+</span>
-    <span class="stat-label">Commands</span>
-  </div>
-  <div class="stat-item">
-    <span class="stat-num">21</span>
-    <span class="stat-label">Categories</span>
-  </div>
-  <div class="stat-item">
-    <span class="stat-num">100%</span>
-    <span class="stat-label">Free</span>
-  </div>
-  <div class="stat-item">
-    <span class="stat-num">24/7</span>
-    <span class="stat-label">Online</span>
+<!-- STATS + SERVER SHOWCASE -->
+<div class="stats-wrap">
+  <p class="stats-line" id="stats-line">
+    Powering <strong id="stat-users">10,000+</strong> users across <strong id="stat-guilds">500+</strong> communities
+  </p>
+  <div class="servers-row" id="servers-row">
+    <div class="server-card">
+      <div class="server-avatar" id="sv-emoji-0">🔥</div>
+      <div>
+        <div class="server-name" id="sv-name-0">Fraud HQ</div>
+        <div class="server-count" id="sv-count-0">Support server</div>
+      </div>
+    </div>
+    <div class="server-card">
+      <div class="server-avatar" id="sv-emoji-1">👑</div>
+      <div>
+        <div class="server-name" id="sv-name-1">The Hangout</div>
+        <div class="server-count" id="sv-count-1">12,400 members</div>
+      </div>
+    </div>
+    <div class="server-card">
+      <div class="server-avatar" id="sv-emoji-2">⚡</div>
+      <div>
+        <div class="server-name" id="sv-name-2">Chill Zone</div>
+        <div class="server-count" id="sv-count-2">8,200 members</div>
+      </div>
+    </div>
+    <div class="server-card">
+      <div class="server-avatar" id="sv-emoji-3">🎮</div>
+      <div>
+        <div class="server-name" id="sv-name-3">Gamer Hub</div>
+        <div class="server-count" id="sv-count-3">5,800 members</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -489,7 +492,7 @@
 <section id="features">
   <p class="section-eyebrow">What it does</p>
   <h2 class="section-title">Everything your server needs.</h2>
-  <p class="section-sub">From first-join to last-ban, one bot handles it all.</p>
+  <p class="section-sub">From first-join to last-ban, one bot handles it all — with zero monthly fees.</p>
   <div class="features-grid">
     <div class="feat-card">
       <div class="feat-icon">🛡️</div>
@@ -517,7 +520,7 @@
       <p class="feat-desc">Auto-bans users who mass-delete channels/roles or mass-ban in a short window.</p>
     </div>
     <div class="feat-card">
-      <div class="feat-icon">🛡️</div>
+      <div class="feat-icon">🚨</div>
       <div class="feat-title">Anti-Raid</div>
       <p class="feat-desc">Detects mass join events and kicks new accounts during raid attempts automatically.</p>
     </div>
@@ -533,8 +536,8 @@
     </div>
     <div class="feat-card">
       <div class="feat-icon">🎉</div>
-      <div class="feat-title">Fun Commands</div>
-      <p class="feat-desc">8-ball, dice roll, ship, RPS, jokes, choose — keep your community entertained.</p>
+      <div class="feat-title">Fun &amp; Social</div>
+      <p class="feat-desc">8-ball, ship, RPS, truth or dare, GIF reactions — keep your community entertained.</p>
     </div>
   </div>
 </section>
@@ -542,7 +545,7 @@
 <!-- COMMANDS -->
 <section id="commands" class="commands-section">
   <p class="section-eyebrow">Command list</p>
-  <h2 class="section-title">150+ commands, one prefix.</h2>
+  <h2 class="section-title">160+ commands, one prefix.</h2>
   <p class="section-sub">Everything starts with <code>$</code>. Type <code>$help</code> in Discord for the full list.</p>
   <div class="cmd-grid">
     <div class="cmd-pill"><span class="cmd-name">$ban</span><span class="cmd-info">Ban a member</span></div>
@@ -551,7 +554,7 @@
     <div class="cmd-pill"><span class="cmd-name">$warn</span><span class="cmd-info">Warn a member</span></div>
     <div class="cmd-pill"><span class="cmd-name">$purge</span><span class="cmd-info">Delete messages</span></div>
     <div class="cmd-pill"><span class="cmd-name">$lock</span><span class="cmd-info">Lock a channel</span></div>
-    <div class="cmd-pill"><span class="cmd-name">$balance</span><span class="cmd-info">View wallet & bank</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$balance</span><span class="cmd-info">View wallet &amp; bank</span></div>
     <div class="cmd-pill"><span class="cmd-name">$daily</span><span class="cmd-info">Claim daily reward</span></div>
     <div class="cmd-pill"><span class="cmd-name">$work</span><span class="cmd-info">Earn coins</span></div>
     <div class="cmd-pill"><span class="cmd-name">$slots</span><span class="cmd-info">Play slots</span></div>
@@ -566,7 +569,13 @@
     <div class="cmd-pill"><span class="cmd-name">$setwelcome</span><span class="cmd-info">Set welcome msg</span></div>
     <div class="cmd-pill"><span class="cmd-name">$8ball</span><span class="cmd-info">Ask the 8-ball</span></div>
     <div class="cmd-pill"><span class="cmd-name">$ship</span><span class="cmd-info">Compatibility check</span></div>
-    <div class="cmd-pill"><span class="cmd-name">$rps</span><span class="cmd-info">Rock paper scissors</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$snipe</span><span class="cmd-info">Snipe deleted msgs</span></div>
+  </div>
+  <div style="margin-top:2.4rem;">
+    <a href="commands.html" class="btn-secondary" style="display:inline-flex;align-items:center;gap:.5rem;">
+      Browse all 160+ commands
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
   </div>
 </section>
 
@@ -586,14 +595,14 @@
     <div class="step">
       <span class="step-num">2</span>
       <div class="step-text">
-        <strong>Grab your token & invite the bot</strong>
+        <strong>Grab your token &amp; invite the bot</strong>
         <span>Copy your bot token from the Bot tab. Generate an invite URL with <code>Administrator</code> permissions and add the bot to your server.</span>
       </div>
     </div>
     <div class="step">
       <span class="step-num">3</span>
       <div class="step-text">
-        <strong>Install dependencies & run</strong>
+        <strong>Install dependencies &amp; run</strong>
         <span>Run <code>pip install discord.py</code> then <code>python bot.py</code>. Your bot is live.</span>
       </div>
     </div>
@@ -618,12 +627,17 @@
 <section class="cta-banner">
   <h2>Ready to power up your server?</h2>
   <p>Free forever. No credit card. No limits.</p>
-  <a href="https://discord.com/developers/applications" class="btn-primary">Add to Discord →</a>
+  <a href="https://discord.com/oauth2/authorize?client_id=1515920241631297646&permissions=8&integration_type=0&scope=bot+applications.commands" class="btn-primary">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.001.022.015.04.032.05a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+    </svg>
+    Add to Discord
+  </a>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <p>© 2026 $Fraud — Built with discord.py</p>
+  <p>© 2026 Fraud — Built by @rpjq with discord.py</p>
   <div class="footer-links">
     <a href="https://github.com/mylinfrm810/Fraud">GitHub</a>
     <a href="https://discord.gg/Xwsg7M2BNa">Support Server</a>
@@ -632,74 +646,6 @@
 </footer>
 
 <script>
-  // Animated terminal typewriter
-  const lines = [
-    { type: 'cmd',    text: '$daily' },
-    { type: 'output', text: '✅ You claimed your daily $500! Wallet: $2,500' },
-    { type: 'cmd',    text: '$slots 200' },
-    { type: 'output', text: '🎰 💎 | 💎 | 💎 — JACKPOT! You won $2,000! 🎉' },
-    { type: 'cmd',    text: '$ban @raider Spamming invites' },
-    { type: 'output', text: '✅ raider#0000 has been banned. Reason: Spamming invites' },
-    { type: 'cmd',    text: '$antinuke enable' },
-    { type: 'output', text: '✅ Anti-nuke is now enabled.' },
-  ];
-
-  const body = document.getElementById('terminal-body');
-  let lineIdx = 0, charIdx = 0, phase = 'type'; // type | pause | output | next
-
-  function renderCurrent() {
-    body.innerHTML = '';
-    for (let i = 0; i < lineIdx; i++) {
-      const l = lines[i];
-      const div = document.createElement('div');
-      div.className = 'term-line';
-      if (l.type === 'cmd') {
-        div.innerHTML = `<span class="term-prefix">you</span><span class="term-cmd">&gt; ${l.text}</span>`;
-      } else {
-        div.innerHTML = `<span class="term-output">${l.text}</span>`;
-      }
-      body.appendChild(div);
-    }
-  }
-
-  function tick() {
-    const line = lines[lineIdx];
-    if (!line) { lineIdx = 0; charIdx = 0; phase = 'type'; body.innerHTML = ''; tick(); return; }
-
-    if (phase === 'type') {
-      charIdx++;
-      renderCurrent();
-      // partial current line
-      const partial = document.createElement('div');
-      partial.className = 'term-line';
-      if (line.type === 'cmd') {
-        partial.innerHTML = `<span class="term-prefix">you</span><span class="term-cmd">&gt; ${line.text.slice(0, charIdx)}<span class="term-cursor"></span></span>`;
-      } else {
-        partial.innerHTML = `<span class="term-output">${line.text.slice(0, charIdx)}<span class="term-cursor"></span></span>`;
-      }
-      body.appendChild(partial);
-      if (charIdx >= line.text.length) { phase = 'pause'; setTimeout(tick, 600); return; }
-      setTimeout(tick, line.type === 'cmd' ? 55 : 18);
-    } else if (phase === 'pause') {
-      lineIdx++;
-      charIdx = 0;
-      phase = 'type';
-      if (lineIdx >= lines.length) {
-        renderCurrent();
-        const cur = document.createElement('div');
-        cur.className = 'term-line';
-        cur.innerHTML = `<span class="term-prefix">you</span><span class="term-cmd">&gt; <span class="term-cursor"></span></span>`;
-        body.appendChild(cur);
-        setTimeout(() => { lineIdx = 0; charIdx = 0; body.innerHTML = ''; tick(); }, 2500);
-        return;
-      }
-      setTimeout(tick, 120);
-    }
-  }
-
-  tick();
-
-  // Scroll-reveal for cards
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) {
@@ -707,14 +653,109 @@
         e.target.style.transform = 'translateY(0)';
       }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.07 });
 
-  document.querySelectorAll('.feat-card, .cmd-pill, .step').forEach(el => {
+  document.querySelectorAll('.feat-card, .cmd-pill, .step, .server-card').forEach(el => {
     el.style.opacity = '0';
-    el.style.transform = 'translateY(16px)';
-    el.style.transition = 'opacity .4s ease, transform .4s ease';
+    el.style.transform = 'translateY(18px)';
+    el.style.transition = 'opacity .45s ease, transform .45s ease';
     observer.observe(el);
   });
+
+  // ── Live stats from bot ────────────────────────────────────────────
+  function svInitials(name) {
+    const words = name.replace(/[^\w\s]/g, ' ').trim().split(/\s+/).filter(Boolean);
+    if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+    if (name.length >= 2)  return name.slice(0, 2).toUpperCase();
+    return (name[0] || '?').toUpperCase();
+  }
+  function svColor(name) {
+    const palette = ['#7c6fff','#3ba55c','#f0b429','#ed4245','#5865f2','#00b2ff','#e67e22','#9b59b6'];
+    let h = 0;
+    for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+    return palette[h % palette.length];
+  }
+
+  (async () => {
+    try {
+      const res = await fetch('/api/stats', { signal: AbortSignal.timeout(4000) });
+      if (!res.ok) return;
+      const data = await res.json();
+
+      // Stats line
+      const fmt = n => n >= 1000000
+        ? (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M+'
+        : n >= 1000 ? Math.floor(n / 1000) + 'K+' : String(n);
+
+      if (data.member_count != null) {
+        const el = document.getElementById('stat-users');
+        if (el) el.textContent = fmt(data.member_count);
+      }
+      if (data.guild_count != null) {
+        const el = document.getElementById('stat-guilds');
+        if (el) el.textContent = fmt(data.guild_count);
+      }
+
+      // Server cards — show only real servers, hide the rest
+      const servers = data.top_servers || [];
+      for (let i = 0; i < 4; i++) {
+        const card = document.querySelector('.server-card:nth-child(' + (i + 1) + ')');
+        if (!card) continue;
+        const sv = servers[i];
+        if (!sv) {
+          card.style.display = 'none';
+          continue;
+        }
+        // Avatar: real icon when available, initials fallback
+        const avatarEl = document.getElementById('sv-emoji-' + i);
+        if (avatarEl) {
+          if (sv.icon_url) {
+            avatarEl.textContent = '';
+            avatarEl.style.background = 'var(--card)';
+            avatarEl.style.border = '1px solid var(--border)';
+            avatarEl.style.padding = '0';
+            avatarEl.style.overflow = 'hidden';
+            const img = document.createElement('img');
+            img.src = sv.icon_url;
+            img.alt = sv.name;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = '50%';
+            img.onerror = () => {
+              avatarEl.removeChild(img);
+              avatarEl.textContent = svInitials(sv.name);
+              avatarEl.style.background = svColor(sv.name);
+              avatarEl.style.color = '#fff';
+              avatarEl.style.fontSize = '.78rem';
+              avatarEl.style.fontWeight = '700';
+              avatarEl.style.letterSpacing = '.03em';
+              avatarEl.style.border = 'none';
+              avatarEl.style.padding = '';
+              avatarEl.style.overflow = '';
+            };
+            avatarEl.appendChild(img);
+          } else {
+            avatarEl.textContent = svInitials(sv.name);
+            avatarEl.style.background = svColor(sv.name);
+            avatarEl.style.color = '#fff';
+            avatarEl.style.fontSize = '.78rem';
+            avatarEl.style.fontWeight = '700';
+            avatarEl.style.letterSpacing = '.03em';
+            avatarEl.style.border = 'none';
+          }
+        }
+        const nameEl  = document.getElementById('sv-name-'  + i);
+        const countEl = document.getElementById('sv-count-' + i);
+        if (nameEl)  nameEl.textContent  = sv.name;
+        if (countEl) countEl.textContent = sv.member_count != null
+          ? sv.member_count.toLocaleString() + ' members'
+          : '—';
+      }
+    } catch (_) {
+      // Silently keep placeholder values on any error
+    }
+  })();
 </script>
 </body>
 </html>
