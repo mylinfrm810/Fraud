@@ -836,17 +836,62 @@
     document.getElementById('sidebar').classList.toggle('open');
   }
 
-  // Settings persistence
+  // Settings — backed by the API which writes to the bot's JSON files
   const settings = {};
+  let saveTimer = null;
+
+  function showToast(msg, ok = true) {
+    let t = document.getElementById('toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'toast';
+      t.style.cssText = 'position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;padding:.6rem 1.1rem;border-radius:8px;font-size:.82rem;font-weight:600;transition:opacity .3s;pointer-events:none;';
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.background = ok ? 'rgba(59,165,92,.15)' : 'rgba(237,66,69,.15)';
+    t.style.border = ok ? '1px solid rgba(59,165,92,.35)' : '1px solid rgba(237,66,69,.35)';
+    t.style.color = ok ? '#3ba55c' : '#ed4245';
+    t.style.opacity = '1';
+    clearTimeout(t._hide);
+    t._hide = setTimeout(() => { t.style.opacity = '0'; }, 2000);
+  }
+
+  async function flushSettings() {
+    try {
+      const res = await fetch(`/api/guilds/${GUILD_ID}/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings),
+      });
+      if (res.ok) showToast('Saved');
+      else showToast('Save failed', false);
+    } catch { showToast('Save failed', false); }
+  }
+
   function saveSetting(key, value) {
     settings[key] = value;
-    localStorage.setItem('fraud_guild_' + GUILD_ID, JSON.stringify(settings));
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(flushSettings, 600);
   }
-  function loadSettings() {
-    try { Object.assign(settings, JSON.parse(localStorage.getItem('fraud_guild_' + GUILD_ID) || '{}')); } catch {}
-    if (document.getElementById('toggleAntiNuke')) document.getElementById('toggleAntiNuke').checked = !!settings['anti_nuke'];
-    if (document.getElementById('toggleAntiRaid')) document.getElementById('toggleAntiRaid').checked = !!settings['anti_raid'];
-    if (document.getElementById('toggleAntiSpam')) document.getElementById('toggleAntiSpam').checked = !!settings['anti_spam'];
+
+  async function loadSettings() {
+    try {
+      const res = await fetch(`/api/guilds/${GUILD_ID}/settings`);
+      if (!res.ok) return;
+      const data = await res.json();
+      Object.assign(settings, data);
+    } catch {}
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.checked = !!val; };
+    const setVal = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = String(val); };
+    set('toggleAntiNuke', settings['anti_nuke']);
+    set('toggleAntiRaid', settings['anti_raid']);
+    set('toggleAntiSpam', settings['anti_spam']);
+    setVal('selectModLog',  settings['mod_log']);
+    setVal('selectJoinLog', settings['join_log']);
+    setVal('selectMsgLog',  settings['msg_log']);
+    setVal('selectWelcome', settings['welcome_channel']);
+    setVal('selectGoodbye', settings['goodbye_channel']);
   }
 
   function populateChannelSelect(el, channels, saved) {
