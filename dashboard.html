@@ -9,39 +9,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg:      #08090a;
-      --surface: #0d0e10;
-      --card:    #111214;
-      --border:  #1c1d20;
+      --bg:      #0a0b0d;
+      --surface: #0f1013;
+      --card:    #13151a;
+      --card2:   #181b21;
+      --border:  #1e2128;
       --accent:  #7c6fff;
-      --text:    #f0f0f4;
-      --muted:   #5e6070;
-      --sans:    'Inter', system-ui, -apple-system, sans-serif;
+      --text:    #e8e9f0;
+      --muted:   #5a5f72;
+      --sans:    'Inter', system-ui, sans-serif;
       --green:   #3ba55c;
-      --red:     #ed4245;
     }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-size: 200px;
-      opacity: 0.035;
-    }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       background: var(--bg);
       color: var(--text);
       font-family: var(--sans);
-      font-size: 16px;
-      line-height: 1.6;
-      overflow-x: hidden;
-      position: relative;
       min-height: 100vh;
     }
     a { color: inherit; text-decoration: none; }
@@ -54,435 +38,379 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 5vw;
-      height: 58px;
-      background: rgba(8,9,10,0.88);
+      padding: 0 2.5rem;
+      height: 56px;
+      background: rgba(10,11,13,0.92);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
+    }
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 2.2rem;
     }
     .nav-logo {
       display: flex;
       align-items: center;
-      gap: .55rem;
-      font-size: .95rem;
-      font-weight: 700;
-      color: var(--text);
+      gap: .5rem;
+      font-size: .9rem;
+      font-weight: 800;
       letter-spacing: -.2px;
     }
     .nav-logo-mark {
-      width: 26px; height: 26px;
+      width: 28px; height: 28px;
       background: var(--accent);
-      border-radius: 7px;
+      border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      font-size: .78rem;
-      font-weight: 800;
-      color: #fff;
-      flex-shrink: 0;
+      font-size: .8rem; font-weight: 800; color: #fff;
     }
     .nav-links {
       display: flex;
-      gap: 1.8rem;
+      gap: 1.6rem;
       list-style: none;
-      align-items: center;
     }
     .nav-links a {
-      font-size: .85rem;
+      font-size: .84rem;
       font-weight: 500;
       color: var(--muted);
-      transition: color .18s;
+      transition: color .15s;
     }
-    .nav-links a:hover, .nav-links a.active { color: var(--text); }
-    .nav-user {
+    .nav-links a:hover { color: var(--text); }
+    .nav-right {
       display: flex;
       align-items: center;
-      gap: .65rem;
+      gap: .75rem;
     }
     .nav-avatar {
-      width: 30px; height: 30px;
+      width: 32px; height: 32px;
       border-radius: 50%;
-      background: var(--card);
-      border: 1px solid var(--border);
       overflow: hidden;
-      flex-shrink: 0;
+      background: var(--card2);
+      cursor: pointer;
     }
     .nav-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .nav-username {
-      font-size: .84rem;
-      font-weight: 600;
-      color: var(--text);
-    }
     .nav-logout {
       font-size: .78rem;
       color: var(--muted);
-      padding: .3rem .75rem;
+      padding: .3rem .7rem;
       border: 1px solid var(--border);
-      border-radius: 999px;
-      transition: color .18s, border-color .18s;
+      border-radius: 6px;
+      transition: color .15s, border-color .15s;
       cursor: pointer;
     }
-    .nav-logout:hover { color: var(--text); border-color: rgba(255,255,255,.2); }
+    .nav-logout:hover { color: var(--text); border-color: rgba(255,255,255,.15); }
 
-    /* PAGE */
-    .page {
-      padding-top: 80px;
-      min-height: 100vh;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* LOGIN SCREEN */
+    /* LOGIN */
     .login-screen {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: calc(100vh - 58px);
+      min-height: 100vh;
       text-align: center;
-      padding: 4rem 5vw;
+      padding: 4rem 2rem;
     }
     .login-logo {
-      width: 64px; height: 64px;
+      width: 68px; height: 68px;
       background: var(--accent);
-      border-radius: 18px;
+      border-radius: 20px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: #fff;
-      margin: 0 auto 2rem;
-      box-shadow: 0 0 40px rgba(124,111,255,.3);
+      font-size: 2rem; font-weight: 800; color: #fff;
+      margin: 0 auto 1.8rem;
+      box-shadow: 0 0 50px rgba(124,111,255,.25);
     }
     .login-screen h1 {
-      font-size: clamp(1.8rem, 4vw, 2.6rem);
-      font-weight: 800;
-      letter-spacing: -1.5px;
-      margin-bottom: .75rem;
+      font-size: 2rem; font-weight: 800; letter-spacing: -1px; margin-bottom: .6rem;
     }
     .login-screen p {
-      color: var(--muted);
-      font-size: .98rem;
-      max-width: 38ch;
-      margin-bottom: 2.4rem;
+      color: var(--muted); font-size: .95rem; margin-bottom: 2rem;
     }
     .btn-discord {
-      display: inline-flex;
-      align-items: center;
-      gap: .65rem;
-      background: #5865f2;
-      color: #fff;
-      padding: .85rem 1.8rem;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: .95rem;
-      transition: transform .14s, box-shadow .14s, opacity .14s;
-      box-shadow: 0 0 30px rgba(88,101,242,.3);
+      display: inline-flex; align-items: center; gap: .6rem;
+      background: #5865f2; color: #fff;
+      padding: .8rem 1.7rem; border-radius: 8px;
+      font-weight: 700; font-size: .92rem;
+      transition: opacity .15s, transform .15s;
     }
-    .btn-discord:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 44px rgba(88,101,242,.5);
-      opacity: .94;
+    .btn-discord:hover { opacity: .88; transform: translateY(-1px); }
+
+    /* PAGE */
+    .page {
+      padding-top: 56px;
+      min-height: 100vh;
     }
 
     /* DASHBOARD */
-    .dash-header {
-      padding: 3rem 5vw 2rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .dash-header h1 {
-      font-size: 1.5rem;
-      font-weight: 800;
-      letter-spacing: -.5px;
-    }
-    .dash-header p {
-      color: var(--muted);
-      font-size: .9rem;
-      margin-top: .3rem;
+    .dash-wrap {
+      padding: 2.5rem 2.5rem 5rem;
+      max-width: 1100px;
+      margin: 0 auto;
     }
 
-    .dash-content { padding: 2.5rem 5vw 5rem; }
-
-    .section-label {
-      font-size: .7rem;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-weight: 600;
-      margin-bottom: 1.2rem;
-    }
-
-    /* SERVER GRID */
-    .servers-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    .dash-top {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 1.6rem;
       gap: 1rem;
+      flex-wrap: wrap;
     }
-
-    .server-card {
+    .dash-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -.4px;
+    }
+    .dash-count {
+      font-size: .84rem;
+      color: var(--muted);
+      margin-top: .2rem;
+    }
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 8px;
+      padding: .45rem .85rem;
+      min-width: 200px;
+    }
+    .search-box svg { color: var(--muted); flex-shrink: 0; }
+    .search-box input {
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: .84rem;
+      font-family: var(--sans);
+      width: 100%;
+    }
+    .search-box input::placeholder { color: var(--muted); }
+
+    /* SERVER CARDS GRID */
+    .servers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: .75rem;
+    }
+
+    /* SECTION DIVIDER */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 2rem 0 1.2rem;
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* SERVER CARD */
+    .server-card {
+      position: relative;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
       overflow: hidden;
+      cursor: pointer;
       transition: border-color .2s, transform .2s;
-      cursor: default;
+      text-decoration: none;
+      display: block;
     }
     .server-card:hover {
       border-color: rgba(124,111,255,.35);
       transform: translateY(-2px);
     }
-    .server-card.has-bot { border-color: rgba(124,111,255,.25); }
-
-    /* Banner / icon area */
-    .server-visual {
-      position: relative;
-      height: 90px;
-      background: var(--surface);
-      overflow: hidden;
+    .server-card.has-bot {
+      border-color: rgba(255,255,255,.06);
     }
-    .server-banner {
+
+    .card-banner {
       width: 100%;
-      height: 100%;
+      height: 100px;
       object-fit: cover;
       display: block;
     }
-    .server-banner-placeholder {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
+    .card-banner-placeholder {
+      width: 100%; height: 100px;
     }
-    .server-icon-wrap {
+    .card-overlay {
       position: absolute;
-      bottom: -18px;
-      left: 1.1rem;
-    }
-    .server-icon {
-      width: 48px; height: 48px;
-      border-radius: 14px;
-      border: 3px solid var(--card);
-      overflow: hidden;
-      background: var(--surface);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--text);
-      flex-shrink: 0;
-    }
-    .server-icon img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      display: block;
+      top: 0; left: 0; right: 0;
+      height: 100px;
+      background: linear-gradient(to bottom, rgba(0,0,0,.1) 0%, rgba(0,0,0,.55) 100%);
     }
 
-    .server-body {
-      padding: 1.5rem 1.1rem 1.1rem;
+    .card-body {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .85rem 1rem;
     }
-    .server-name {
-      font-size: .94rem;
+    .card-icon {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: var(--card2);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .9rem; font-weight: 700;
+      border: 2px solid var(--border);
+    }
+    .card-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .card-info { min-width: 0; flex: 1; }
+    .card-name {
+      font-size: .88rem;
       font-weight: 700;
-      color: var(--text);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      margin-bottom: .25rem;
     }
-    .server-meta {
-      font-size: .78rem;
+    .card-role {
+      font-size: .75rem;
       color: var(--muted);
+      margin-top: .05rem;
+    }
+
+    /* INVITE CARD */
+    .server-card.no-bot {
+      cursor: default;
+    }
+    .server-card.no-bot:hover {
+      border-color: rgba(255,255,255,.1);
+      transform: none;
+    }
+    .card-invite {
       display: flex;
       align-items: center;
-      gap: .6rem;
+      gap: .75rem;
+      padding: .85rem 1rem;
     }
-    .server-badge {
+    .invite-icon {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: var(--card2);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .9rem; font-weight: 700;
+      border: 2px solid var(--border);
+    }
+    .invite-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .invite-info { flex: 1; min-width: 0; }
+    .invite-name {
+      font-size: .88rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .invite-sub {
+      font-size: .73rem;
+      color: var(--muted);
+    }
+    .btn-invite {
       display: inline-flex;
       align-items: center;
       gap: .3rem;
-      font-size: .7rem;
-      font-weight: 600;
-      padding: .18rem .55rem;
-      border-radius: 999px;
-    }
-    .badge-bot {
-      background: rgba(124,111,255,.12);
-      color: var(--accent);
-      border: 1px solid rgba(124,111,255,.25);
-    }
-    .badge-owner {
-      background: rgba(240,180,41,.1);
-      color: #f0b429;
-      border: 1px solid rgba(240,180,41,.22);
-    }
-    .badge-admin {
-      background: rgba(59,165,92,.1);
-      color: var(--green);
-      border: 1px solid rgba(59,165,92,.22);
-    }
-    .server-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: .8rem;
-    }
-    .server-badges { display: flex; gap: .35rem; flex-wrap: wrap; }
-    .btn-manage {
-      display: inline-flex;
-      align-items: center;
-      gap: .35rem;
       font-size: .75rem;
       font-weight: 600;
       color: var(--accent);
-      padding: .3rem .8rem;
+      padding: .3rem .7rem;
       border: 1px solid rgba(124,111,255,.3);
-      border-radius: 999px;
-      transition: background .18s, border-color .18s;
+      border-radius: 6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background .15s;
+      text-decoration: none;
     }
-    .btn-manage:hover {
-      background: rgba(124,111,255,.1);
-      border-color: rgba(124,111,255,.5);
-    }
-    .btn-add {
-      display: inline-flex;
-      align-items: center;
-      gap: .35rem;
-      font-size: .75rem;
-      font-weight: 600;
-      color: var(--muted);
-      padding: .3rem .8rem;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      transition: color .18s, border-color .18s;
-    }
-    .btn-add:hover { color: var(--text); border-color: rgba(255,255,255,.2); }
+    .btn-invite:hover { background: rgba(124,111,255,.1); }
 
     /* SKELETON */
     .skeleton {
-      background: linear-gradient(90deg, var(--surface) 25%, rgba(255,255,255,.04) 50%, var(--surface) 75%);
+      background: linear-gradient(90deg, var(--surface) 25%, rgba(255,255,255,.03) 50%, var(--surface) 75%);
       background-size: 200% 100%;
       animation: shimmer 1.4s infinite;
-      border-radius: 8px;
     }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .sk-card { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: var(--card); }
+    .sk-banner { height: 100px; }
+    .sk-body { display: flex; align-items: center; gap: .75rem; padding: .85rem 1rem; }
+    .sk-icon { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; }
+    .sk-lines { flex: 1; }
+    .sk-line1 { height: 12px; width: 60%; border-radius: 6px; margin-bottom: .4rem; }
+    .sk-line2 { height: 10px; width: 40%; border-radius: 6px; }
 
-    .skeleton-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-    }
-    .skeleton-visual { height: 90px; }
-    .skeleton-body { padding: 1.5rem 1.1rem 1.1rem; }
-    .skeleton-name { height: 14px; width: 65%; margin-bottom: .5rem; }
-    .skeleton-meta { height: 11px; width: 40%; }
-
-    /* TABS */
-    .dash-tabs {
-      display: flex;
-      gap: .5rem;
-      margin-bottom: 2rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 0;
-    }
-    .tab-btn {
-      font-size: .85rem;
-      font-weight: 600;
-      color: var(--muted);
-      padding: .65rem 1rem;
-      border-bottom: 2px solid transparent;
-      cursor: pointer;
-      transition: color .18s;
-      background: none;
-      border-left: none;
-      border-right: none;
-      border-top: none;
-      margin-bottom: -1px;
-    }
-    .tab-btn:hover { color: var(--text); }
-    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-    /* ERROR */
-    .error-banner {
-      background: rgba(237,66,69,.08);
-      border: 1px solid rgba(237,66,69,.22);
-      color: #ed4245;
-      border-radius: 12px;
-      padding: 1rem 1.3rem;
-      font-size: .88rem;
-      margin-bottom: 1.5rem;
-    }
-
-    /* EMPTY */
-    .empty-state {
-      text-align: center;
-      padding: 4rem 2rem;
-      color: var(--muted);
-      font-size: .9rem;
-    }
-    .empty-state svg { margin: 0 auto 1rem; opacity: .3; }
+    #replit-badge { display: none !important; }
 
     @media (max-width: 640px) {
       .nav-links { display: none; }
+      .dash-wrap { padding: 1.5rem 1.2rem 4rem; }
       .servers-grid { grid-template-columns: 1fr; }
+      .search-box { min-width: 0; }
     }
   </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
-  <a href="index.html" class="nav-logo">
-    <div class="nav-logo-mark">F</div>
-    Fraud
-  </a>
-  <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="commands.html">Commands</a></li>
-    <li><a href="status.html">Status</a></li>
-    <li><a href="dashboard.html" class="active">Dashboard</a></li>
-  </ul>
-  <div class="nav-user" id="navUser" style="display:none;">
-    <div class="nav-avatar" id="navAvatar">
-      <img id="navAvatarImg" src="" alt="" />
-    </div>
-    <span class="nav-username" id="navUsername"></span>
+  <div class="nav-left">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-mark">F</div>
+      Fraud
+    </a>
+    <ul class="nav-links">
+      <li><a href="commands.html">Commands</a></li>
+      <li><a href="status.html">Status</a></li>
+    </ul>
+  </div>
+  <div class="nav-right" id="navRight" style="display:none;">
+    <div class="nav-avatar" id="navAvatar"><img id="navAvatarImg" src="" alt="" /></div>
     <a href="/api/auth/logout" class="nav-logout">Log out</a>
   </div>
 </nav>
 
 <div class="page" id="page">
 
-  <!-- LOGIN STATE -->
+  <!-- LOGIN -->
   <div class="login-screen" id="loginScreen">
     <div class="login-logo">F</div>
     <h1>Fraud Dashboard</h1>
-    <p>Log in with Discord to manage your servers and configure the bot.</p>
-    <a href="https://3e8f398c-06cb-42e7-91b7-2466c9afa76d-00-2vq50tm911wgk.picard.replit.dev/api/auth/callback" class="btn-discord">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.001.022.015.04.032.05a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
-      </svg>
+    <p>Log in with Discord to manage your servers.</p>
+    <a href="/api/auth/login" class="btn-discord">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.001.022.015.04.032.05a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
       Log in with Discord
     </a>
   </div>
 
-  <!-- DASHBOARD STATE -->
+  <!-- DASHBOARD -->
   <div id="dashboardScreen" style="display:none;">
-    <div class="dash-header">
-      <h1>Your Servers</h1>
-      <p id="dashSubtitle">Select a server to configure Fraud.</p>
-    </div>
-
-    <div class="dash-content">
-      <div id="errorBanner" class="error-banner" style="display:none;"></div>
-
-      <div class="dash-tabs">
-        <button class="tab-btn active" data-tab="all" onclick="switchTab(this,'all')">All Servers</button>
-        <button class="tab-btn" data-tab="bot" onclick="switchTab(this,'bot')">Has Fraud</button>
-        <button class="tab-btn" data-tab="nbot" onclick="switchTab(this,'nbot')">Add Fraud</button>
+    <div class="dash-wrap">
+      <div class="dash-top">
+        <div>
+          <div class="dash-title">Your Servers</div>
+          <div class="dash-count" id="dashCount"></div>
+        </div>
+        <div class="search-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search..." id="searchInput" oninput="renderList()" />
+        </div>
       </div>
 
-      <div id="serversList" class="servers-grid"></div>
+      <div id="botServers" class="servers-grid"></div>
+      <div id="noBotSection" style="display:none;">
+        <div class="section-divider">Add Fraud to a Server</div>
+        <div id="noBotServers" class="servers-grid"></div>
+      </div>
     </div>
   </div>
 
@@ -490,182 +418,153 @@
 
 <script>
   const DISCORD_API = "https://discord.com/api/v10";
+  const CDN = "https://cdn.discordapp.com";
   const BOT_CLIENT_ID = "1515920241631297646";
   const INVITE_URL = `https://discord.com/oauth2/authorize?client_id=${BOT_CLIENT_ID}&permissions=8&integration_type=0&scope=bot+applications.commands`;
-  const CDN = "https://cdn.discordapp.com";
 
   function getCookie(name) {
-    const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.$?*|{}()[\]\\/+^]/g, '\\$&') + '=([^;]*)'));
-    return match ? decodeURIComponent(match[1]) : null;
+    const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.$?*|{}()[\]\\/+^]/g, '\\$&') + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : null;
   }
 
-  function serverIconUrl(id, hash) {
+  function iconUrl(id, hash) {
     if (!hash) return null;
-    const ext = hash.startsWith("a_") ? "gif" : "webp";
-    return `${CDN}/icons/${id}/${hash}.${ext}?size=128`;
+    return `${CDN}/icons/${id}/${hash.startsWith('a_') ? 'gif' : 'webp'}?size=128`;
   }
 
-  function serverBannerUrl(id, hash) {
+  function bannerUrl(id, hash) {
     if (!hash) return null;
-    const ext = hash.startsWith("a_") ? "gif" : "webp";
-    return `${CDN}/banners/${id}/${hash}.${ext}?size=480`;
+    return `${CDN}/banners/${id}/${hash.startsWith('a_') ? 'gif' : 'webp'}?size=480`;
   }
 
-  function userAvatarUrl(id, hash, discriminator) {
-    if (hash) {
-      const ext = hash.startsWith("a_") ? "gif" : "webp";
-      return `${CDN}/avatars/${id}/${hash}.${ext}?size=64`;
-    }
-    return `${CDN}/embed/avatars/${Number(discriminator || 0) % 5}.png`;
+  function avatarUrl(id, hash, disc) {
+    if (hash) return `${CDN}/avatars/${id}/${hash.startsWith('a_') ? 'gif' : 'webp'}?size=64`;
+    return `${CDN}/embed/avatars/${Number(disc || 0) % 5}.png`;
+  }
+
+  function colorFor(name) {
+    const p = ['#7c6fff','#3ba55c','#f0b429','#ed4245','#5865f2','#00b2ff','#e67e22','#9b59b6'];
+    let h = 0; for (const c of name) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+    return p[h % p.length];
   }
 
   function initials(name) {
-    return name.replace(/[^\w\s]/g, ' ').trim().split(/\s+/).filter(Boolean)
-      .slice(0, 2).map(w => w[0]).join('').toUpperCase() || name[0].toUpperCase();
+    return (name.replace(/[^\w\s]/g, ' ').trim().split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('') || name[0]).toUpperCase();
   }
 
-  function colorFromName(name) {
-    const palette = ['#7c6fff','#3ba55c','#f0b429','#ed4245','#5865f2','#00b2ff','#e67e22','#9b59b6'];
-    let h = 0;
-    for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
-    return palette[h % palette.length];
+  function adminPerm(p) { return (BigInt(p) & 8n) === 8n; }
+
+  let allGuilds = [];
+
+  function renderServer(g) {
+    const ico = iconUrl(g.id, g.icon);
+    const ban = bannerUrl(g.id, g.banner);
+    const col = colorFor(g.name);
+    const role = g.owner ? 'Owner' : 'Manager';
+
+    const iconHtml = ico
+      ? `<img src="${ico}" alt="${g.name}" onerror="this.style.display='none';this.parentElement.innerHTML='<span>${initials(g.name)}</span>'" />`
+      : `<span>${initials(g.name)}</span>`;
+
+    const bannerHtml = ban
+      ? `<img class="card-banner" src="${ban}" alt="" onerror="this.outerHTML='<div class=\\'card-banner-placeholder\\' style=\\'background:${col}18;\\'></div>'" />`
+      : `<div class="card-banner-placeholder" style="background:${col}18;"></div>`;
+
+    return `
+      <a class="server-card has-bot" href="server.html?id=${g.id}">
+        ${bannerHtml}
+        ${ban ? '<div class="card-overlay"></div>' : ''}
+        <div class="card-body">
+          <div class="card-icon" style="background:${col}22;">${iconHtml}</div>
+          <div class="card-info">
+            <div class="card-name" title="${g.name}">${g.name}</div>
+            <div class="card-role">${role}</div>
+          </div>
+        </div>
+      </a>`;
   }
 
-  function ADMIN_PERM(permissions) {
-    return (BigInt(permissions) & BigInt(0x8)) === BigInt(0x8);
+  function renderNoBot(g) {
+    const ico = iconUrl(g.id, g.icon);
+    const col = colorFor(g.name);
+    const iconHtml = ico
+      ? `<img src="${ico}" alt="${g.name}" onerror="this.style.display='none';this.parentElement.innerHTML='<span>${initials(g.name)}</span>'" />`
+      : `<span>${initials(g.name)}</span>`;
+
+    return `
+      <div class="server-card no-bot">
+        <div class="card-invite">
+          <div class="invite-icon" style="background:${col}22;">${iconHtml}</div>
+          <div class="invite-info">
+            <div class="invite-name" title="${g.name}">${g.name}</div>
+            <div class="invite-sub">Bot not added</div>
+          </div>
+          <a href="${INVITE_URL}&guild_id=${g.id}" target="_blank" rel="noopener noreferrer" class="btn-invite">+ Invite</a>
+        </div>
+      </div>`;
   }
 
-  function renderSkeletons(count = 8) {
-    return Array.from({ length: count }).map(() => `
-      <div class="skeleton-card">
-        <div class="skeleton-visual skeleton"></div>
-        <div class="skeleton-body">
-          <div class="skeleton skeleton-name"></div>
-          <div class="skeleton skeleton-meta"></div>
+  function skeletons(n) {
+    return Array.from({length:n}).map(()=>`
+      <div class="sk-card">
+        <div class="sk-banner skeleton"></div>
+        <div class="sk-body">
+          <div class="sk-icon skeleton"></div>
+          <div class="sk-lines">
+            <div class="sk-line1 skeleton"></div>
+            <div class="sk-line2 skeleton"></div>
+          </div>
         </div>
       </div>`).join('');
   }
 
-  function renderServer(guild, hasBot) {
-    const bannerUrl = serverBannerUrl(guild.id, guild.banner);
-    const iconUrl = serverIconUrl(guild.id, guild.icon);
-    const isOwner = guild.owner;
-    const isAdmin = guild.owner || ADMIN_PERM(guild.permissions);
-
-    const visualContent = bannerUrl
-      ? `<img class="server-banner" src="${bannerUrl}" alt="" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'server-banner-placeholder\\' style=\\'background:${colorFromName(guild.name)};opacity:.25;\\'></div>'" />`
-      : `<div class="server-banner-placeholder" style="background:${colorFromName(guild.name)}22;"></div>`;
-
-    const iconContent = iconUrl
-      ? `<img src="${iconUrl}" alt="${guild.name}" loading="lazy" onerror="this.outerHTML='<span style=\\'font-size:.9rem;font-weight:700;\\'>${initials(guild.name)}</span>'" />`
-      : `<span style="font-size:.85rem;font-weight:700;color:#fff;">${initials(guild.name)}</span>`;
-
-    const badges = [
-      hasBot ? '<span class="server-badge badge-bot">✓ Fraud</span>' : '',
-      isOwner ? '<span class="server-badge badge-owner">Owner</span>' : (isAdmin ? '<span class="server-badge badge-admin">Admin</span>' : ''),
-    ].filter(Boolean).join('');
-
-    const actionBtn = hasBot
-      ? `<a href="${INVITE_URL}&guild_id=${guild.id}" target="_blank" rel="noopener noreferrer" class="btn-manage">Manage</a>`
-      : `<a href="${INVITE_URL}&guild_id=${guild.id}" target="_blank" rel="noopener noreferrer" class="btn-add">+ Add Fraud</a>`;
-
-    return `
-      <div class="server-card ${hasBot ? 'has-bot' : ''}">
-        <div class="server-visual">
-          ${visualContent}
-          <div class="server-icon-wrap">
-            <div class="server-icon" style="background:${colorFromName(guild.name)};">
-              ${iconContent}
-            </div>
-          </div>
-        </div>
-        <div class="server-body">
-          <div class="server-name" title="${guild.name}">${guild.name}</div>
-          <div class="server-footer">
-            <div class="server-badges">${badges}</div>
-            ${actionBtn}
-          </div>
-        </div>
-      </div>`;
-  }
-
-  let allGuilds = [];
-  let currentTab = 'all';
-
-  function switchTab(btn, tab) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentTab = tab;
-    renderList();
-  }
-
   function renderList() {
-    const list = document.getElementById('serversList');
-    let guilds = allGuilds;
+    const q = (document.getElementById('searchInput').value || '').toLowerCase();
+    const filtered = allGuilds.filter(g => g.name.toLowerCase().includes(q));
+    const withBot = filtered.filter(g => g._hasBot);
+    const noBot = filtered.filter(g => !g._hasBot);
 
-    if (currentTab === 'bot') guilds = guilds.filter(g => g._hasBot);
-    else if (currentTab === 'nbot') guilds = guilds.filter(g => !g._hasBot);
+    document.getElementById('botServers').innerHTML = withBot.length
+      ? withBot.map(renderServer).join('')
+      : '<div style="color:var(--muted);font-size:.88rem;padding:.5rem 0;">No servers found.</div>';
 
-    if (guilds.length === 0) {
-      list.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 15s1.5-2 4-2 4 2 4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-        <p>No servers found in this filter.</p>
-      </div>`;
-      return;
+    const noBotSection = document.getElementById('noBotSection');
+    if (noBot.length) {
+      noBotSection.style.display = 'block';
+      document.getElementById('noBotServers').innerHTML = noBot.map(renderNoBot).join('');
+    } else {
+      noBotSection.style.display = 'none';
     }
-
-    list.innerHTML = guilds.map(g => renderServer(g, g._hasBot)).join('');
   }
 
-  async function loadDashboard(token) {
-    const [userRes, guildsRes, botGuildsRes] = await Promise.all([
+  async function load(token) {
+    document.getElementById('botServers').innerHTML = skeletons(4);
+
+    const [userRes, guildsRes, botRes] = await Promise.all([
       fetch(`${DISCORD_API}/users/@me`, { headers: { Authorization: `Bearer ${token}` } }),
       fetch(`${DISCORD_API}/users/@me/guilds`, { headers: { Authorization: `Bearer ${token}` } }),
       fetch('/api/guilds/bot'),
     ]);
 
-    if (userRes.status === 401 || guildsRes.status === 401) {
-      document.cookie = 'discord_token=; Max-Age=0; path=/;';
-      showLogin();
-      return;
-    }
+    if (userRes.status === 401) { document.cookie = 'discord_token=;Max-Age=0;path=/'; showLogin(); return; }
 
     const user = await userRes.json();
     const guilds = await guildsRes.json();
 
-    if (!Array.isArray(guilds)) {
-      showError("Failed to load your servers. Try logging in again.");
-      return;
-    }
+    if (!Array.isArray(guilds)) { document.getElementById('botServers').innerHTML = '<div style="color:var(--muted);font-size:.88rem;">Failed to load servers.</div>'; return; }
 
-    let botGuildSet = new Set();
-    if (botGuildsRes.ok) {
-      const botData = await botGuildsRes.json();
-      if (Array.isArray(botData.guild_ids)) {
-        botGuildSet = new Set(botData.guild_ids);
-      }
-    }
+    let botSet = new Set();
+    if (botRes.ok) { const d = await botRes.json(); if (Array.isArray(d.guild_ids)) botSet = new Set(d.guild_ids); }
 
-    const adminGuilds = guilds
-      .filter(g => g.owner || ADMIN_PERM(g.permissions))
-      .sort((a, b) => {
-        const aB = botGuildSet.has(a.id);
-        const bB = botGuildSet.has(b.id);
-        if (aB !== bB) return aB ? -1 : 1;
-        return a.name.localeCompare(b.name);
-      });
+    const admin = guilds.filter(g => g.owner || adminPerm(g.permissions));
+    admin.forEach(g => g._hasBot = botSet.has(g.id));
+    admin.sort((a,b) => { if (a._hasBot !== b._hasBot) return a._hasBot ? -1 : 1; return a.name.localeCompare(b.name); });
 
-    adminGuilds.forEach(g => { g._hasBot = botGuildSet.has(g.id); });
+    allGuilds = admin;
 
-    allGuilds = adminGuilds;
-
-    const avatarUrl = userAvatarUrl(user.id, user.avatar, user.discriminator);
-    document.getElementById('navAvatarImg').src = avatarUrl;
-    document.getElementById('navUsername').textContent = user.global_name || user.username;
-    document.getElementById('navUser').style.display = 'flex';
-
-    document.getElementById('dashSubtitle').textContent =
-      `${adminGuilds.length} server${adminGuilds.length !== 1 ? 's' : ''} where you have admin permissions.`;
+    document.getElementById('navAvatarImg').src = avatarUrl(user.id, user.avatar, user.discriminator);
+    document.getElementById('navRight').style.display = 'flex';
+    document.getElementById('dashCount').textContent = `${admin.filter(g=>g._hasBot).length} server${admin.filter(g=>g._hasBot).length!==1?'s':''} available`;
 
     renderList();
   }
@@ -675,39 +574,14 @@
     document.getElementById('dashboardScreen').style.display = 'none';
   }
 
-  function showError(msg) {
-    const el = document.getElementById('errorBanner');
-    el.textContent = msg;
-    el.style.display = 'block';
-  }
-
   async function init() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('error')) {
-      showLogin();
-      document.querySelector('.login-screen p').textContent =
-        'Login failed. Please try again.';
-      return;
-    }
-
+    if (new URLSearchParams(location.search).get('error')) { showLogin(); return; }
     const token = getCookie('discord_token');
-    if (!token) {
-      showLogin();
-      return;
-    }
+    if (!token) { showLogin(); return; }
 
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('dashboardScreen').style.display = 'block';
-
-    const list = document.getElementById('serversList');
-    list.innerHTML = renderSkeletons(8);
-
-    try {
-      await loadDashboard(token);
-    } catch (err) {
-      showError('Could not connect to Discord. Check your connection and try again.');
-      list.innerHTML = '';
-    }
+    try { await load(token); } catch { document.getElementById('botServers').innerHTML = '<div style="color:var(--muted);font-size:.88rem;">Could not connect. Try again.</div>'; }
   }
 
   init();
