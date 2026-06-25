@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Server Settings — Fraud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:      #08090a;
+      --surface: #0d0e10;
+      --card:    #111214;
+      --border:  #1c1d20;
+      --accent:  #7c6fff;
+      --text:    #f0f0f4;
+      --muted:   #5e6070;
+      --sans:    'Inter', system-ui, -apple-system, sans-serif;
+      --green:   #3ba55c;
+      --red:     #ed4245;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px;
+      opacity: 0.035;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5vw;
+      height: 58px;
+      background: rgba(8,9,10,0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -.2px;
+    }
+    .nav-logo-mark {
+      width: 26px; height: 26px;
+      background: var(--accent);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.8rem;
+      list-style: none;
+      align-items: center;
+    }
+    .nav-links a {
+      font-size: .85rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color .18s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-user {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+    }
+    .nav-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .nav-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .nav-username {
+      font-size: .84rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .nav-logout {
+      font-size: .78rem;
+      color: var(--muted);
+      padding: .3rem .75rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      transition: color .18s, border-color .18s;
+      cursor: pointer;
+    }
+    .nav-logout:hover { color: var(--text); border-color: rgba(255,255,255,.2); }
+
+    .page {
+      padding-top: 58px;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* SERVER HERO */
+    .server-hero {
+      position: relative;
+      height: 180px;
+      background: var(--surface);
+      overflow: hidden;
+    }
+    .server-hero-banner {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .server-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 40%, rgba(8,9,10,.85) 100%);
+    }
+
+    .server-hero-info {
+      position: absolute;
+      bottom: 1.4rem;
+      left: 5vw;
+      display: flex;
+      align-items: flex-end;
+      gap: 1rem;
+    }
+    .server-hero-icon {
+      width: 64px; height: 64px;
+      border-radius: 18px;
+      border: 3px solid var(--bg);
+      overflow: hidden;
+      background: var(--card);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .server-hero-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .server-hero-name {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -.5px;
+      text-shadow: 0 1px 8px rgba(0,0,0,.6);
+    }
+    .server-hero-id {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-top: .1rem;
+    }
+
+    /* BREADCRUMB */
+    .breadcrumb {
+      padding: 1.2rem 5vw .5rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .82rem;
+      color: var(--muted);
+    }
+    .breadcrumb a { color: var(--muted); transition: color .18s; }
+    .breadcrumb a:hover { color: var(--text); }
+    .breadcrumb-sep { opacity: .4; }
+
+    /* CONTENT */
+    .content {
+      padding: 1.5rem 5vw 5rem;
+      max-width: 860px;
+    }
+
+    .section-title {
+      font-size: .7rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      margin-top: 2rem;
+    }
+    .section-title:first-child { margin-top: 0; }
+
+    /* STAT CARDS */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: .75rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.1rem 1.2rem;
+    }
+    .stat-label {
+      font-size: .73rem;
+      color: var(--muted);
+      font-weight: 500;
+      margin-bottom: .3rem;
+    }
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -.5px;
+    }
+    .stat-sub {
+      font-size: .73rem;
+      color: var(--muted);
+      margin-top: .15rem;
+    }
+
+    /* SETTINGS CARDS */
+    .settings-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: .75rem;
+    }
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.3rem;
+      border-bottom: 1px solid var(--border);
+      gap: 1rem;
+    }
+    .setting-row:last-child { border-bottom: none; }
+    .setting-info { flex: 1; min-width: 0; }
+    .setting-name {
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .setting-desc {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-top: .1rem;
+    }
+
+    /* TOGGLE */
+    .toggle {
+      position: relative;
+      width: 42px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--border);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .toggle input:checked + .toggle-track { background: var(--accent); }
+    .toggle-thumb {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 18px; height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform .2s;
+      pointer-events: none;
+    }
+    .toggle input:checked ~ .toggle-thumb { transform: translateX(18px); }
+
+    /* SELECT */
+    .setting-select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: .82rem;
+      font-family: var(--sans);
+      padding: .4rem .7rem;
+      cursor: pointer;
+      outline: none;
+      transition: border-color .18s;
+      min-width: 140px;
+    }
+    .setting-select:focus { border-color: var(--accent); }
+
+    /* BADGE */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .7rem;
+      font-weight: 600;
+      padding: .18rem .6rem;
+      border-radius: 999px;
+    }
+    .badge-green {
+      background: rgba(59,165,92,.12);
+      color: var(--green);
+      border: 1px solid rgba(59,165,92,.25);
+    }
+    .badge-accent {
+      background: rgba(124,111,255,.12);
+      color: var(--accent);
+      border: 1px solid rgba(124,111,255,.25);
+    }
+
+    /* DANGER ZONE */
+    .danger-card {
+      background: rgba(237,66,69,.04);
+      border: 1px solid rgba(237,66,69,.18);
+      border-radius: 16px;
+      padding: 1.2rem 1.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: .75rem;
+    }
+    .danger-title { font-size: .9rem; font-weight: 600; color: var(--red); }
+    .danger-desc { font-size: .78rem; color: var(--muted); margin-top: .1rem; }
+    .btn-danger {
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--red);
+      padding: .4rem .9rem;
+      border: 1px solid rgba(237,66,69,.3);
+      border-radius: 999px;
+      background: none;
+      cursor: pointer;
+      transition: background .18s, border-color .18s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .btn-danger:hover { background: rgba(237,66,69,.08); border-color: rgba(237,66,69,.5); }
+
+    /* NOT FOUND */
+    .not-found {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 58px);
+      text-align: center;
+      padding: 4rem 5vw;
+      color: var(--muted);
+    }
+    .not-found h2 { font-size: 1.3rem; font-weight: 700; color: var(--text); margin-bottom: .5rem; }
+    .not-found p { font-size: .9rem; margin-bottom: 1.5rem; }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--accent);
+      padding: .5rem 1.1rem;
+      border: 1px solid rgba(124,111,255,.3);
+      border-radius: 999px;
+      transition: background .18s;
+    }
+    .btn-back:hover { background: rgba(124,111,255,.08); }
+
+    /* SKELETON */
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface) 25%, rgba(255,255,255,.04) 50%, var(--surface) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 8px;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    .coming-soon {
+      font-size: .78rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .server-hero { height: 140px; }
+      .server-hero-name { font-size: 1.15rem; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+    }
+
+    #replit-badge { display: none !important; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-mark">F</div>
+    Fraud
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="commands.html">Commands</a></li>
+    <li><a href="status.html">Status</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+  </ul>
+  <div class="nav-user" id="navUser" style="display:none;">
+    <div class="nav-avatar" id="navAvatar">
+      <img id="navAvatarImg" src="" alt="" />
+    </div>
+    <span class="nav-username" id="navUsername"></span>
+    <a href="/api/auth/logout" class="nav-logout">Log out</a>
+  </div>
+</nav>
+
+<div class="page" id="page">
+
+  <!-- NOT FOUND / NO AUTH -->
+  <div class="not-found" id="notFound" style="display:none;">
+    <h2 id="notFoundTitle">Server not found</h2>
+    <p id="notFoundDesc">This server doesn't exist or you don't have access to it.</p>
+    <a href="dashboard.html" class="btn-back">← Back to Dashboard</a>
+  </div>
+
+  <!-- SERVER PAGE -->
+  <div id="serverPage" style="display:none;">
+    <div class="server-hero" id="serverHero">
+      <div class="server-hero-overlay"></div>
+      <div class="server-hero-info">
+        <div class="server-hero-icon" id="heroIcon"></div>
+        <div>
+          <div class="server-hero-name" id="heroName"></div>
+          <div class="server-hero-id" id="heroId"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="breadcrumb">
+      <a href="dashboard.html">Dashboard</a>
+      <span class="breadcrumb-sep">›</span>
+      <span id="breadcrumbName">Server</span>
+    </div>
+
+    <div class="content">
+      <div class="stats-row" id="statsRow">
+        <div class="stat-card">
+          <div class="stat-label">Status</div>
+          <div class="stat-value" style="color:var(--green);font-size:1rem;margin-top:.2rem;">
+            <span class="badge badge-green">● Online</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Bot since</div>
+          <div class="stat-value" id="statSince" style="font-size:1rem;">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Your role</div>
+          <div class="stat-value" id="statRole" style="font-size:.95rem;">—</div>
+        </div>
+      </div>
+
+      <div class="section-title">Protection Settings</div>
+      <div class="settings-card">
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">Anti-Nuke</div>
+            <div class="setting-desc">Block mass bans, kicks, and channel deletions automatically.</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="toggleAntiNuke" onchange="saveSetting('anti_nuke', this.checked)" />
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">Anti-Raid</div>
+            <div class="setting-desc">Automatically lock the server when a raid is detected.</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="toggleAntiRaid" onchange="saveSetting('anti_raid', this.checked)" />
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">Anti-Spam</div>
+            <div class="setting-desc">Mute members who send too many messages in a short time.</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="toggleAntiSpam" onchange="saveSetting('anti_spam', this.checked)" />
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+      </div>
+
+      <div class="section-title">Logging</div>
+      <div class="settings-card">
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">Mod Log Channel</div>
+            <div class="setting-desc">Where moderation actions are logged.</div>
+          </div>
+          <select class="setting-select" id="selectModLog" onchange="saveSetting('mod_log', this.value)">
+            <option value="">— None —</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">Join / Leave Log</div>
+            <div class="setting-desc">Log when members join or leave the server.</div>
+          </div>
+          <select class="setting-select" id="selectJoinLog" onchange="saveSetting('join_log', this.value)">
+            <option value="">— None —</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-title">Danger Zone</div>
+      <div class="danger-card">
+        <div>
+          <div class="danger-title">Remove Fraud from this server</div>
+          <div class="danger-desc">This will kick the bot. All settings will be lost.</div>
+        </div>
+        <button class="btn-danger" onclick="kickBot()">Remove Bot</button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const DISCORD_API = "https://discord.com/api/v10";
+  const CDN = "https://cdn.discordapp.com";
+  const BOT_CLIENT_ID = "1515920241631297646";
+  const INVITE_URL = `https://discord.com/oauth2/authorize?client_id=${BOT_CLIENT_ID}&permissions=8&integration_type=0&scope=bot+applications.commands`;
+
+  const params = new URLSearchParams(window.location.search);
+  const GUILD_ID = params.get('id');
+
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.$?*|{}()[\]\\/+^]/g, '\\$&') + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  function colorFromName(name) {
+    const palette = ['#7c6fff','#3ba55c','#f0b429','#ed4245','#5865f2','#00b2ff','#e67e22','#9b59b6'];
+    let h = 0;
+    for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+    return palette[h % palette.length];
+  }
+
+  function initials(name) {
+    return name.replace(/[^\w\s]/g, ' ').trim().split(/\s+/).filter(Boolean)
+      .slice(0, 2).map(w => w[0]).join('').toUpperCase() || name[0].toUpperCase();
+  }
+
+  function serverIconUrl(id, hash) {
+    if (!hash) return null;
+    const ext = hash.startsWith("a_") ? "gif" : "webp";
+    return `${CDN}/icons/${id}/${hash}.${ext}?size=128`;
+  }
+
+  function serverBannerUrl(id, hash) {
+    if (!hash) return null;
+    const ext = hash.startsWith("a_") ? "gif" : "webp";
+    return `${CDN}/banners/${id}/${hash}.${ext}?size=960`;
+  }
+
+  function userAvatarUrl(id, hash, discriminator) {
+    if (hash) {
+      const ext = hash.startsWith("a_") ? "gif" : "webp";
+      return `${CDN}/avatars/${id}/${hash}.${ext}?size=64`;
+    }
+    return `${CDN}/embed/avatars/${Number(discriminator || 0) % 5}.png`;
+  }
+
+  function ADMIN_PERM(permissions) {
+    return (BigInt(permissions) & BigInt(0x8)) === BigInt(0x8);
+  }
+
+  function showNotFound(title, desc) {
+    document.getElementById('notFoundTitle').textContent = title || 'Server not found';
+    document.getElementById('notFoundDesc').textContent = desc || "This server doesn't exist or you don't have access to it.";
+    document.getElementById('notFound').style.display = 'flex';
+    document.getElementById('serverPage').style.display = 'none';
+  }
+
+  function populateChannelSelect(el, channels, savedValue) {
+    const textChannels = channels.filter(c => c.type === 0).sort((a,b) => a.position - b.position);
+    const grouped = {};
+    channels.filter(c => c.type === 4).forEach(cat => { grouped[cat.id] = []; });
+    textChannels.forEach(c => {
+      if (c.parent_id && grouped[c.parent_id]) grouped[c.parent_id].push(c);
+      else if (!c.parent_id) {
+        if (!grouped['__none__']) grouped['__none__'] = [];
+        grouped['__none__'].push(c);
+      }
+    });
+
+    el.innerHTML = '<option value="">— None —</option>';
+    Object.entries(grouped).forEach(([catId, chs]) => {
+      if (!chs.length) return;
+      if (catId !== '__none__') {
+        const cat = channels.find(c => c.id === catId);
+        if (cat) {
+          const og = document.createElement('optgroup');
+          og.label = cat.name.toUpperCase();
+          chs.forEach(c => {
+            const o = document.createElement('option');
+            o.value = c.id;
+            o.textContent = '# ' + c.name;
+            if (c.id === savedValue) o.selected = true;
+            og.appendChild(o);
+          });
+          el.appendChild(og);
+        }
+      } else {
+        chs.forEach(c => {
+          const o = document.createElement('option');
+          o.value = c.id;
+          o.textContent = '# ' + c.name;
+          if (c.id === savedValue) o.selected = true;
+          el.appendChild(o);
+        });
+      }
+    });
+  }
+
+  const settings = {};
+
+  function saveSetting(key, value) {
+    settings[key] = value;
+    localStorage.setItem(`fraud_guild_${GUILD_ID}`, JSON.stringify(settings));
+  }
+
+  function loadSettings() {
+    const raw = localStorage.getItem(`fraud_guild_${GUILD_ID}`);
+    if (raw) {
+      try { Object.assign(settings, JSON.parse(raw)); } catch {}
+    }
+    document.getElementById('toggleAntiNuke').checked = !!settings['anti_nuke'];
+    document.getElementById('toggleAntiRaid').checked = !!settings['anti_raid'];
+    document.getElementById('toggleAntiSpam').checked = !!settings['anti_spam'];
+  }
+
+  function kickBot() {
+    if (!confirm('Are you sure you want to remove Fraud from this server?')) return;
+    window.open(`https://discord.com/channels/${GUILD_ID}`, '_blank');
+    alert('To remove the bot, go to your server settings → Integrations → Bots and kick it from there.');
+  }
+
+  async function init() {
+    if (!GUILD_ID) { showNotFound('No server selected', 'Go back to the dashboard and click Manage on a server.'); return; }
+
+    const token = getCookie('discord_token');
+    if (!token) {
+      window.location.href = 'dashboard.html';
+      return;
+    }
+
+    const [userRes, guildsRes, botGuildsRes] = await Promise.all([
+      fetch(`${DISCORD_API}/users/@me`, { headers: { Authorization: `Bearer ${token}` } }),
+      fetch(`${DISCORD_API}/users/@me/guilds`, { headers: { Authorization: `Bearer ${token}` } }),
+      fetch('/api/guilds/bot'),
+    ]);
+
+    if (userRes.status === 401) { window.location.href = 'dashboard.html'; return; }
+
+    const user = await userRes.json();
+    const guilds = await guildsRes.json();
+
+    const avatarUrl = userAvatarUrl(user.id, user.avatar, user.discriminator);
+    document.getElementById('navAvatarImg').src = avatarUrl;
+    document.getElementById('navUsername').textContent = user.global_name || user.username;
+    document.getElementById('navUser').style.display = 'flex';
+
+    if (!Array.isArray(guilds)) { showNotFound(); return; }
+
+    const guild = guilds.find(g => g.id === GUILD_ID);
+    if (!guild || (!guild.owner && !ADMIN_PERM(guild.permissions))) {
+      showNotFound('Access denied', "You don't have admin permissions in this server.");
+      return;
+    }
+
+    let botGuildSet = new Set();
+    if (botGuildsRes.ok) {
+      const bd = await botGuildsRes.json();
+      if (Array.isArray(bd.guild_ids)) botGuildSet = new Set(bd.guild_ids);
+    }
+
+    if (!botGuildSet.has(GUILD_ID)) {
+      showNotFound('Bot not in this server', 'Fraud is not currently in this server.');
+      document.getElementById('notFoundDesc').innerHTML =
+        `Fraud is not in this server. <a href="${INVITE_URL}&guild_id=${GUILD_ID}" target="_blank" style="color:var(--accent)">Add it here</a>.`;
+      return;
+    }
+
+    document.getElementById('serverPage').style.display = 'block';
+    document.title = `${guild.name} — Fraud Dashboard`;
+
+    const heroIcon = document.getElementById('heroIcon');
+    const iconUrl = serverIconUrl(guild.id, guild.icon);
+    const color = colorFromName(guild.name);
+    heroIcon.style.background = color;
+    if (iconUrl) {
+      heroIcon.innerHTML = `<img src="${iconUrl}" alt="${guild.name}" onerror="this.outerHTML='<span style=\\'font-size:1.2rem;font-weight:700;\\'>${initials(guild.name)}</span>'" />`;
+    } else {
+      heroIcon.textContent = initials(guild.name);
+    }
+
+    document.getElementById('heroName').textContent = guild.name;
+    document.getElementById('heroId').textContent = `ID: ${guild.id}`;
+    document.getElementById('breadcrumbName').textContent = guild.name;
+
+    const bannerUrl = serverBannerUrl(guild.id, guild.banner);
+    const hero = document.getElementById('serverHero');
+    if (bannerUrl) {
+      const img = document.createElement('img');
+      img.className = 'server-hero-banner';
+      img.src = bannerUrl;
+      img.alt = '';
+      img.onerror = () => { img.remove(); hero.style.background = `${color}22`; };
+      hero.insertBefore(img, hero.firstChild);
+    } else {
+      hero.style.background = `${color}22`;
+    }
+
+    document.getElementById('statRole').textContent = guild.owner ? 'Owner' : 'Admin';
+    document.getElementById('statSince').textContent = 'Active';
+
+    loadSettings();
+
+    try {
+      const chRes = await fetch(`${DISCORD_API}/guilds/${GUILD_ID}/channels`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (chRes.ok) {
+        const channels = await chRes.json();
+        populateChannelSelect(document.getElementById('selectModLog'), channels, settings['mod_log']);
+        populateChannelSelect(document.getElementById('selectJoinLog'), channels, settings['join_log']);
+      }
+    } catch {}
+  }
+
+  init();
+</script>
+</body>
+</html>
