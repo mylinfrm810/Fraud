@@ -618,9 +618,10 @@
   }
 
   async function loadDashboard(token) {
-    const [userRes, guildsRes] = await Promise.all([
+    const [userRes, guildsRes, botGuildsRes] = await Promise.all([
       fetch(`${DISCORD_API}/users/@me`, { headers: { Authorization: `Bearer ${token}` } }),
       fetch(`${DISCORD_API}/users/@me/guilds`, { headers: { Authorization: `Bearer ${token}` } }),
+      fetch('/api/guilds/bot'),
     ]);
 
     if (userRes.status === 401 || guildsRes.status === 401) {
@@ -637,15 +638,24 @@
       return;
     }
 
+    let botGuildSet = new Set();
+    if (botGuildsRes.ok) {
+      const botData = await botGuildsRes.json();
+      if (Array.isArray(botData.guild_ids)) {
+        botGuildSet = new Set(botData.guild_ids);
+      }
+    }
+
     const adminGuilds = guilds
       .filter(g => g.owner || ADMIN_PERM(g.permissions))
       .sort((a, b) => {
-        const aB = !!a.bot; const bB = !!b.bot;
+        const aB = botGuildSet.has(a.id);
+        const bB = botGuildSet.has(b.id);
         if (aB !== bB) return aB ? -1 : 1;
         return a.name.localeCompare(b.name);
       });
 
-    adminGuilds.forEach(g => { g._hasBot = false; });
+    adminGuilds.forEach(g => { g._hasBot = botGuildSet.has(g.id); });
 
     allGuilds = adminGuilds;
 
