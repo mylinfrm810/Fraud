@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Commands — Fraud Discord Bot</title>
-  <meta name="description" content="Browse all 160+ Fraud bot commands across 25 categories. Full command reference with descriptions and usage syntax." />
+  <meta name="description" content="Browse all 1195+ Fraud bot commands across 47 categories. Full command reference with descriptions and usage syntax." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -73,10 +73,11 @@
       letter-spacing: -.2px;
     }
     .nav-logo-mark {
-      width: 26px; height: 26px;
-      background: var(--accent);
-      border-radius: 7px;
-      display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      display: block;
       font-size: .78rem;
       font-weight: 800;
       color: #fff;
@@ -404,16 +405,16 @@
 <!-- NAV -->
 <nav>
   <a href="index.html" class="nav-logo">
-    <div class="nav-logo-mark">F</div>
+    <img class="nav-logo-mark" src="assets/logo.png" alt="Fraud">
     Fraud
   </a>
   <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#features">Features</a></li>
     <li><a href="commands.html" class="active">Commands</a></li>
     <li><a href="status.html">Status</a></li>
     <li><a href="dashboard.html">Dashboard</a></li>
     <li>
-      <a href="https://discord.com/oauth2/authorize?client_id=1515920241631297646&permissions=8&integration_type=0&scope=bot+applications.commands" class="nav-cta" target="_blank" rel="noopener noreferrer">
+      <a href="https://discord.com/oauth2/authorize?client_id=1515920241631297646&permissions=8&integration_type=0&scope=bot+applications.commands" class="nav-cta">
         Add to Discord
       </a>
     </li>
@@ -424,7 +425,7 @@
 <div class="page-header">
   <p class="section-eyebrow">Full reference</p>
   <h1>All commands, every category.</h1>
-  <p>160+ commands across 25 categories. Everything starts with <code>$</code>. Commands marked 🔒 require server staff permissions.</p>
+  <p>1195+ commands across 47 categories. Everything starts with <code>$</code>. Commands marked 🔒 require server staff permissions.</p>
 </div>
 
 <!-- SEARCH -->
