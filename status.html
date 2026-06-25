@@ -3,311 +3,536 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Status — Fraud</title>
-  <meta name="description" content="Real-time availability and performance status across all Fraud services and integrations." />
+  <title>Fraud — Service Status</title>
+  <meta name="description" content="Real-time availability and performance across the Fraud platform." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg:#08090a; --panel:rgba(255,255,255,.025); --panel-2:rgba(255,255,255,.04);
-      --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.13);
-      --text:#f4f5f7; --muted:#8a8d98; --faint:#5d616e;
-      --accent:#6ea8fe; --glow:#1f6f5c;
-      --green:#3fbd80; --yellow:#f0b429; --red:#ed4245;
-      --sans:'Geist',system-ui,-apple-system,sans-serif;
-      --mono:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+      --bg:      #08090a;
+      --surface: #0d0e10;
+      --card:    #111214;
+      --border:  #1c1d20;
+      --accent:  #7c6fff;
+      --text:    #f0f0f4;
+      --muted:   #5e6070;
+      --sans:    'Inter', system-ui, -apple-system, sans-serif;
+      --green:   #3ba55c;
+      --yellow:  #f0b429;
+      --red:     #ed4245;
     }
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;}
-    body{background:var(--bg);color:var(--text);font-family:var(--sans);
-      line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;position:relative;overflow-x:hidden;}
-    body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-      background:
-        radial-gradient(60% 50% at 50% 0%,rgba(31,111,92,.18),transparent 70%),
-        radial-gradient(50% 40% at 100% 100%,rgba(60,80,140,.12),transparent 70%),
-        radial-gradient(40% 40% at 0% 90%,rgba(31,111,92,.10),transparent 70%);}
-    a{color:inherit;text-decoration:none;}
-    ::selection{background:rgba(110,168,254,.3);}
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px;
+      opacity: 0.035;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+    a { color: inherit; text-decoration: none; }
 
     /* NAV */
-    .topbar{position:sticky;top:0;z-index:50;display:flex;justify-content:center;padding:18px 20px;}
-    .nav{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 18px;
-      background:rgba(15,16,18,.72);backdrop-filter:blur(16px);
-      border:1px solid var(--border);border-radius:999px;
-      box-shadow:0 8px 40px rgba(0,0,0,.5);max-width:760px;width:100%;}
-    .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:1.02rem;margin-right:6px;}
-    .brand .logo{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;
-      background:linear-gradient(135deg,#1f6f5c,#0e3b32);font-size:.85rem;font-weight:800;}
-    .nav-links{display:flex;gap:4px;margin:0 auto;}
-    .nav-links a{padding:8px 14px;border-radius:999px;color:var(--muted);font-size:.9rem;font-weight:500;transition:.15s;}
-    .nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--panel-2);}
-    .nav-cta{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:999px;
-      background:#5865f2;color:#fff;font-weight:600;font-size:.88rem;transition:.15s;white-space:nowrap;}
-    .nav-cta:hover{background:#4954e6;transform:translateY(-1px);}
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5vw;
+      height: 58px;
+      background: rgba(8,9,10,0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -.2px;
+    }
+    .nav-logo-mark {
+      width: 26px; height: 26px;
+      background: var(--accent);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .nav-sub {
+      font-size: .78rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-left: .15rem;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.8rem;
+      list-style: none;
+      align-items: center;
+    }
+    .nav-links a {
+      font-size: .85rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color .18s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-cta {
+      background: var(--text) !important;
+      color: var(--bg) !important;
+      padding: .4rem .95rem !important;
+      border-radius: 999px !important;
+      font-size: .8rem !important;
+      font-weight: 600 !important;
+      transition: opacity .18s !important;
+    }
+    .nav-cta:hover { opacity: .85 !important; }
 
     /* HERO */
-    .hero{position:relative;z-index:1;text-align:center;padding:56px 20px 36px;max-width:760px;margin:0 auto;}
-    .hero h1{font-size:clamp(2rem,5vw,3rem);font-weight:800;letter-spacing:-.03em;}
-    .hero p{color:var(--muted);margin-top:10px;font-size:1.02rem;}
-    .overall{display:inline-flex;align-items:center;gap:.55rem;margin-top:22px;padding:.55rem 1.3rem;
-      border-radius:999px;font-size:.88rem;font-weight:600;border:1px solid;}
-    .overall.green{background:rgba(63,189,128,.1);border-color:rgba(63,189,128,.3);color:var(--green);}
-    .overall.yellow{background:rgba(240,180,41,.1);border-color:rgba(240,180,41,.3);color:var(--yellow);}
-    .overall.red{background:rgba(237,66,69,.1);border-color:rgba(237,66,69,.3);color:var(--red);}
-    .pulse{width:8px;height:8px;border-radius:50%;background:currentColor;animation:pulse 2s infinite;}
-    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+    .hero {
+      padding: 9rem 5vw 5rem;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.15;
+      margin-bottom: .6rem;
+    }
+    .hero h1 strong { color: var(--accent); font-weight: 800; }
+    .hero p {
+      font-size: .95rem;
+      color: var(--muted);
+      max-width: 52ch;
+      margin: 0 auto 2.2rem;
+    }
+    .overall-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      padding: .55rem 1.2rem;
+      border-radius: 999px;
+      font-size: .88rem;
+      font-weight: 600;
+      border: 1px solid;
+    }
+    .overall-badge.operational {
+      background: rgba(59,165,92,.12);
+      border-color: rgba(59,165,92,.3);
+      color: #3ba55c;
+    }
+    .overall-badge.degraded {
+      background: rgba(240,180,41,.1);
+      border-color: rgba(240,180,41,.3);
+      color: var(--yellow);
+    }
+    .overall-badge.outage {
+      background: rgba(237,66,69,.1);
+      border-color: rgba(237,66,69,.3);
+      color: var(--red);
+    }
+    .badge-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .4; }
+    }
 
     /* CONTENT */
-    .content{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:8px 20px 90px;}
+    .content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 5vw 8rem;
+      position: relative;
+      z-index: 1;
+    }
 
     /* SERVICE GROUP */
-    .group{background:var(--panel);border:1px solid var(--border);border-radius:16px;
-      overflow:hidden;margin-bottom:14px;transition:border-color .15s;}
-    .group:hover{border-color:var(--border-hi);}
-    .group-head{display:flex;align-items:center;justify-content:space-between;
-      padding:14px 18px;border-bottom:1px solid var(--border);}
-    .group-name{font-size:.97rem;font-weight:700;letter-spacing:-.01em;}
-    .group-badge{display:flex;align-items:center;gap:.45rem;font-size:.8rem;font-weight:600;}
-    .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-    .dot.green{background:var(--green);}
-    .dot.yellow{background:var(--yellow);}
-    .dot.red{background:var(--red);}
-    .dot.grey{background:var(--faint);}
-    .label.green{color:var(--green);}
-    .label.yellow{color:var(--yellow);}
-    .label.red{color:var(--red);}
-    .label.grey{color:var(--faint);}
+    .service-group {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1.2rem;
+    }
+    .group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .group-title {
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .group-status {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      font-size: .8rem;
+      font-weight: 600;
+    }
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .status-dot.green  { background: var(--green); }
+    .status-dot.yellow { background: var(--yellow); }
+    .status-dot.red    { background: var(--red); }
+    .status-label.green  { color: var(--green); }
+    .status-label.yellow { color: var(--yellow); }
+    .status-label.red    { color: var(--red); }
 
     /* SERVICE ROW */
-    .row{display:flex;align-items:center;justify-content:space-between;
-      padding:12px 18px;border-bottom:1px solid var(--border);transition:background .13s;}
-    .row:last-child{border-bottom:none;}
-    .row:hover{background:rgba(255,255,255,.02);}
-    .row-left{display:flex;align-items:center;gap:10px;}
-    .row-icon{font-size:1rem;width:22px;text-align:center;flex-shrink:0;line-height:1;}
-    .row-name{font-size:.88rem;font-weight:500;}
-    .row-desc{font-size:.8rem;color:var(--muted);margin-left:4px;}
-    .row-right{display:flex;align-items:center;gap:.5rem;}
-    .tag{font-family:var(--mono);font-size:.74rem;font-weight:500;padding:2px 9px;border-radius:6px;}
-    .tag.green{color:var(--green);background:rgba(63,189,128,.1);}
-    .tag.yellow{color:var(--yellow);background:rgba(240,180,41,.1);}
-    .tag.red{color:var(--red);background:rgba(237,66,69,.1);}
-    .tag.grey{color:var(--faint);background:var(--panel-2);}
-    .row-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-    .row-dot.green{background:var(--green);}
-    .row-dot.yellow{background:var(--yellow);}
-    .row-dot.red{background:var(--red);}
-    .row-dot.grey{background:var(--faint);}
+    .service-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .78rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+    }
+    .service-row:last-child { border-bottom: none; }
+    .service-row:hover { background: rgba(255,255,255,.02); }
+    .service-info {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+    }
+    .service-icon {
+      font-size: 1rem;
+      line-height: 1;
+      width: 22px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .service-name {
+      font-size: .88rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .service-right {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .service-tag {
+      font-size: .75rem;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .service-tag.green  { color: var(--green); }
+    .service-tag.yellow { color: var(--yellow); }
+    .service-tag.red    { color: var(--red); }
+    .row-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .row-dot.green  { background: var(--green); }
+    .row-dot.yellow { background: var(--yellow); }
+    .row-dot.red    { background: var(--red); }
 
     /* FOOTER */
-    footer{border-top:1px solid var(--border);padding:34px 20px;position:relative;z-index:1;}
-    .foot{max-width:860px;margin:0 auto;display:flex;justify-content:space-between;
-      align-items:center;flex-wrap:wrap;gap:16px;color:var(--muted);font-size:.88rem;}
-    .foot-links{display:flex;gap:20px;}
-    .foot-links a:hover{color:var(--text);}
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 5vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+    footer p { font-size: .78rem; color: var(--muted); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { font-size: .78rem; color: var(--muted); transition: color .18s; }
+    .footer-links a:hover { color: var(--text); }
 
-    @media(max-width:640px){
-      .nav-links{display:none;}
-      .row-desc{display:none;}
-      .group-head{flex-direction:column;align-items:flex-start;gap:.4rem;}
+    @media (max-width: 640px) {
+      .nav-links li:not(:last-child) { display: none; }
+      .group-header { flex-direction: column; align-items: flex-start; gap: .5rem; }
     }
   </style>
 </head>
 <body>
 
-<div class="topbar">
-  <nav class="nav">
-    <a href="index.html" class="brand"><span class="logo">F</span>Fraud</a>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="commands.html">Commands</a>
-      <a href="status.html" class="active">Status</a>
-    </div>
-    <a href="https://discord.com/oauth2/authorize?client_id=1515920241631297646&permissions=8&integration_type=0&scope=bot+applications.commands" class="nav-cta" target="_blank" rel="noopener">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3l-.2.5c1.6.4 3 .9 4.3 1.6a16.9 16.9 0 0 0-14.9 0C5.8 4.4 7.2 3.9 8.8 3.5L8.6 3a19.8 19.8 0 0 0-4.9 1.4C1.1 8.3.4 12.1.7 15.8a19.9 19.9 0 0 0 6 3l.8-1.3c-.7-.2-1.3-.5-1.9-.9l.4-.3a14.2 14.2 0 0 0 12 0l.4.3c-.6.4-1.2.7-1.9.9l.8 1.3a19.9 19.9 0 0 0 6-3c.4-4.3-.6-8-3.2-11.4ZM8.9 13.7c-1 0-1.7-.9-1.7-2s.8-2 1.7-2 1.7.9 1.7 2-.8 2-1.7 2Zm6.2 0c-1 0-1.7-.9-1.7-2s.8-2 1.7-2 1.7.9 1.7 2-.7 2-1.7 2Z"/></svg>
-      Add to Discord
-    </a>
-  </nav>
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-mark">F</div>
+    Fraud
+    <span class="nav-sub">/ status</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="commands.html">Commands</a></li>
+    <li><a href="status.html" class="active">Status</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li>
+      <a href="https://discord.com/oauth2/authorize?client_id=1515920241631297646&permissions=8&integration_type=0&scope=bot+applications.commands" class="nav-cta" target="_blank" rel="noopener noreferrer">
+        Add to Discord
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1><strong>Fraud</strong> service status</h1>
+  <p>Real-time availability and performance across the Fraud platform.</p>
+  <span class="overall-badge operational">
+    <span class="badge-dot"></span>
+    All systems operational
+  </span>
 </div>
 
-<header class="hero">
-  <h1>Service Status</h1>
-  <p>Real-time availability across all Fraud services and third-party integrations.</p>
-  <span class="overall green"><span class="pulse"></span>All systems operational</span>
-</header>
-
+<!-- CONTENT -->
 <div class="content">
 
   <!-- Core Infrastructure -->
-  <div class="group">
-    <div class="group-head">
-      <span class="group-name">⚡ Core Infrastructure</span>
-      <span class="group-badge"><span class="dot green"></span><span class="label green">Operational</span></span>
+  <div class="service-group">
+    <div class="group-header">
+      <span class="group-title">Core Infrastructure</span>
+      <span class="group-status">
+        <span class="status-dot green"></span>
+        <span class="status-label green">Operational</span>
+      </span>
     </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🤖</span><span class="row-name">Bot Gateway</span><span class="row-desc">Discord WebSocket connection</span></div>
-      <div class="row-right"><span class="tag green">Online</span><span class="row-dot green"></span></div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🤖</span>
+        <span class="service-name">Bot Gateway</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Online</span>
+        <span class="row-dot green"></span>
+      </div>
     </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">⚡</span><span class="row-name">Command Handler</span><span class="row-desc">Prefix command routing</span></div>
-      <div class="row-right"><span class="tag green">Fast</span><span class="row-dot green"></span></div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🗄️</span>
+        <span class="service-name">Data Storage</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Fast</span>
+        <span class="row-dot green"></span>
+      </div>
     </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🗄️</span><span class="row-name">Data Storage</span><span class="row-desc">JSON persistence layer</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">⚡</span>
+        <span class="service-name">Command Handler</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Fast</span>
+        <span class="row-dot green"></span>
+      </div>
     </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🌐</span><span class="row-name">Hosting</span><span class="row-desc">24/7 cloud environment</span></div>
-      <div class="row-right"><span class="tag green">Stable</span><span class="row-dot green"></span></div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🌐</span>
+        <span class="service-name">Hosting</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Stable</span>
+        <span class="row-dot green"></span>
+      </div>
     </div>
   </div>
 
   <!-- Platform Services -->
-  <div class="group">
-    <div class="group-head">
-      <span class="group-name">🛡️ Platform Services</span>
-      <span class="group-badge"><span class="dot green"></span><span class="label green">Operational</span></span>
+  <div class="service-group">
+    <div class="group-header">
+      <span class="group-title">Platform Services</span>
+      <span class="group-status">
+        <span class="status-dot green"></span>
+        <span class="status-label green">Operational</span>
+      </span>
     </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🛡️</span><span class="row-name">Moderation</span><span class="row-desc">Ban, mute, warn, jail, case logs</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🛡️</span>
+        <span class="service-name">Moderation</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
     </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🔒</span><span class="row-name">Anti-Nuke & Raid</span><span class="row-desc">Mass-action detection and auto-punishment</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">💰</span>
+        <span class="service-name">Economy</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
     </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">💰</span><span class="row-name">Economy</span><span class="row-desc">Currency, gambling, daily rewards</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🎟️</span>
+        <span class="service-name">Tickets</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
     </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🎵</span><span class="row-name">Music</span><span class="row-desc">Playback, queue, loop, volume</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🖼️</span>
+        <span class="service-name">GIF / Image API</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
     </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">⭐</span><span class="row-name">Leveling</span><span class="row-desc">XP, ranks, leaderboards, role rewards</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
-    </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🎟️</span><span class="row-name">Tickets</span><span class="row-desc">Support ticket system</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
-    </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">💫</span><span class="row-name">Starboard</span><span class="row-desc">Star-pinned messages</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
-    </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🎁</span><span class="row-name">Giveaways</span><span class="row-desc">Timed giveaways with forced-winner support</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
-    </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🖼️</span><span class="row-name">Image Manipulation</span><span class="row-desc">Filters, overlays, GIF reactions</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
-    </div>
-  </div>
-
-  <!-- Games -->
-  <div class="group">
-    <div class="group-head">
-      <span class="group-name">🎮 Games & Gaming APIs</span>
-      <span class="group-badge"><span class="dot green"></span><span class="label green">Mostly Operational</span></span>
-    </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🕹️</span><span class="row-name">Tic-Tac-Toe</span><span class="row-desc">Interactive button-based game with stats and leaderboard</span></div>
-      <div class="row-right"><span class="tag green">Built-in</span><span class="row-dot green"></span></div>
-    </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🎯</span><span class="row-name">Fortnite Shop</span><span class="row-desc">Daily item shop via fortnite-api.com</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
-    </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🔫</span><span class="row-name">Fortnite Cosmetics</span><span class="row-desc">Item lookup and watch list via fortnite-api.com</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
-    </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">⚔️</span><span class="row-name">Valorant</span><span class="row-desc">Account lookup via api.henrikdev.xyz (free, no key)</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
-    </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🎵</span><span class="row-name">osu!</span><span class="row-desc">Player stats via osu.ppy.sh public profiles</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
-    </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🕹️</span><span class="row-name">Game Deals</span><span class="row-desc">PC game pricing via CheapShark API</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
-    </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🎮</span><span class="row-name">Xbox Live</span><span class="row-desc">Requires Microsoft OAuth — links to profile page instead</span></div>
-      <div class="row-right"><span class="tag grey">No Auth</span><span class="row-dot grey"></span></div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">📊</span>
+        <span class="service-name">Leveling</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
     </div>
   </div>
 
-  <!-- External Integrations -->
-  <div class="group">
-    <div class="group-head">
-      <span class="group-name">🔗 External Integrations</span>
-      <span class="group-badge"><span class="dot green"></span><span class="label green">Operational</span></span>
+  <!-- Platform Integrations -->
+  <div class="service-group">
+    <div class="group-header">
+      <span class="group-title">Platform Integrations</span>
+      <span class="group-status">
+        <span class="status-dot green"></span>
+        <span class="status-label green">Operational</span>
+      </span>
     </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🟠</span><span class="row-name">Roblox</span><span class="row-desc">Profile, avatar, friends, groups via users.roblox.com</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🟠</span>
+        <span class="service-name">Roblox</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
     </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🎧</span><span class="row-name">Last.fm</span><span class="row-desc">Now-playing, charts, recent tracks</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🔒</span>
+        <span class="service-name">Anti-Nuke / Anti-Raid</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
     </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">😂</span><span class="row-name">Meme / Reddit</span><span class="row-desc">Random memes from Reddit JSON feeds</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">💍</span>
+        <span class="service-name">Marriage</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
     </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🌡️</span><span class="row-name">Weather</span><span class="row-desc">Current conditions and forecast</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🎲</span>
+        <span class="service-name">Gambling</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Operational</span>
+        <span class="row-dot green"></span>
+      </div>
     </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">💍</span><span class="row-name">Marriage</span><span class="row-desc">Discord-native marriage system</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">🌡️</span>
+        <span class="service-name">Weather</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Stable</span>
+        <span class="row-dot green"></span>
+      </div>
     </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🎲</span><span class="row-name">Gambling</span><span class="row-desc">Slots, coinflip, blackjack and more</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
-    </div>
-    <div class="row">
-      <div class="row-left"><span class="row-icon">🖼️</span><span class="row-name">GIF / Image APIs</span><span class="row-desc">Tenor, Giphy, waifu.it for reaction GIFs</span></div>
-      <div class="row-right"><span class="tag green">Operational</span><span class="row-dot green"></span></div>
+    <div class="service-row">
+      <div class="service-info">
+        <span class="service-icon">😂</span>
+        <span class="service-name">Meme / Reddit API</span>
+      </div>
+      <div class="service-right">
+        <span class="service-tag green">Stable</span>
+        <span class="row-dot green"></span>
+      </div>
     </div>
   </div>
 
 </div>
 
+<!-- FOOTER -->
 <footer>
-  <div class="foot">
-    <div class="brand"><span class="logo">F</span>Fraud</div>
-    <div class="foot-links">
-      <a href="commands.html">Commands</a>
-      <a href="https://discord.gg/Xwsg7M2BNa" target="_blank" rel="noopener">Support Server</a>
-      <a href="https://github.com/mylinfrm810/Fraud" target="_blank" rel="noopener">GitHub</a>
-      <a href="index.html">Home</a>
-    </div>
-    <div>© 2026 Fraud</div>
+  <p>© 2026 Fraud — Built by @rpjq with discord.py</p>
+  <div class="footer-links">
+    <a href="https://github.com/mylinfrm810/Fraud">GitHub</a>
+    <a href="https://discord.gg/Xwsg7M2BNa">Support Server</a>
+    <a href="index.html">Home</a>
   </div>
 </footer>
 
 <script>
-  const observer = new IntersectionObserver(entries => {
+  const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) {
         e.target.style.opacity = '1';
         e.target.style.transform = 'translateY(0)';
       }
     });
-  }, { threshold: 0.04 });
+  }, { threshold: 0.05 });
 
-  document.querySelectorAll('.group').forEach(el => {
+  document.querySelectorAll('.service-group').forEach(el => {
     el.style.opacity = '0';
-    el.style.transform = 'translateY(14px)';
-    el.style.transition = 'opacity .38s ease, transform .38s ease';
+    el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity .4s ease, transform .4s ease';
     observer.observe(el);
   });
 </script>

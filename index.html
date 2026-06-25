@@ -3,206 +3,759 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fraud — Discord's all-in-one bot</title>
-  <meta name="description" content="Fraud is Discord's premier all-in-one bot — moderation, anti-nuke, economy, music, leveling, LastFM, socials and 1195+ commands across 47 categories." />
+  <title>Fraud — The Discord Bot That Does Everything</title>
+  <meta name="description" content="A powerful Discord bot with moderation, economy, gambling, tickets, anti-nuke and more. Free. Fast. Yours." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
+    /* ── TOKENS ──────────────────────────────────────────── */
     :root {
-      --bg:#08090a; --panel:rgba(255,255,255,.025); --panel-2:rgba(255,255,255,.04);
-      --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.13);
-      --text:#f4f5f7; --muted:#8a8d98; --faint:#5d616e;
-      --accent:#6ea8fe; --glow:#1f6f5c;
-      --sans:'Geist',system-ui,-apple-system,sans-serif;
-      --mono:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+      --bg:      #08090a;
+      --surface: #0d0e10;
+      --card:    #111214;
+      --border:  #1c1d20;
+      --accent:  #7c6fff;
+      --text:    #f0f0f4;
+      --muted:   #5e6070;
+      --sans:    'Inter', system-ui, -apple-system, sans-serif;
     }
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;}
-    body{background:var(--bg);color:var(--text);font-family:var(--sans);
-      line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;position:relative;overflow-x:hidden;}
-    body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-      background:
-        radial-gradient(55% 45% at 50% -5%,rgba(31,111,92,.22),transparent 70%),
-        radial-gradient(45% 40% at 100% 30%,rgba(60,80,140,.12),transparent 70%),
-        radial-gradient(45% 45% at 0% 80%,rgba(31,111,92,.12),transparent 70%);}
-    a{color:inherit;text-decoration:none;}
-    ::selection{background:rgba(110,168,254,.3);}
-    .wrap{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:0 22px;}
 
-    /* NAV */
-    .topbar{position:sticky;top:0;z-index:50;display:flex;justify-content:center;padding:18px 20px;}
-    .nav{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 18px;
-      background:rgba(15,16,18,.72);backdrop-filter:blur(16px);
-      border:1px solid var(--border);border-radius:999px;
-      box-shadow:0 8px 40px rgba(0,0,0,.5);max-width:760px;width:100%;}
-    .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:1.02rem;margin-right:6px;}
-    .brand .logo{width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;}
-    .nav-links{display:flex;gap:4px;margin:0 auto;}
-    .nav-links a{padding:8px 14px;border-radius:999px;color:var(--muted);font-size:.9rem;font-weight:500;transition:.15s;}
-    .nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--panel-2);}
-    .nav-cta{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:999px;
-      background:#5865f2;color:#fff;font-weight:600;font-size:.88rem;transition:.15s;}
-    .nav-cta:hover{background:#4954e6;transform:translateY(-1px);}
+    /* ── NOISE OVERLAY ───────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px;
+      opacity: 0.035;
+    }
 
-    /* HERO */
-    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;
-      padding:70px 0 60px;}
-    .badge{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;
-      background:var(--panel-2);border:1px solid var(--border);font-size:.8rem;color:var(--muted);
-      font-family:var(--mono);margin-bottom:22px;}
-    .badge .dot{width:7px;height:7px;border-radius:50%;background:#3fbd80;box-shadow:0 0 8px #3fbd80;}
-    .hero h1{font-size:clamp(2.4rem,5.2vw,3.7rem);font-weight:800;letter-spacing:-.035em;line-height:1.05;}
-    .hero h1 .g{background:linear-gradient(120deg,#a9c7ff,#6ea8fe);-webkit-background-clip:text;background-clip:text;color:transparent;}
-    .hero .lead{color:var(--muted);font-size:1.08rem;margin-top:18px;max-width:480px;}
-    .cta-row{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap;}
-    .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 22px;border-radius:12px;
-      font-weight:600;font-size:.95rem;transition:.15s;border:1px solid transparent;}
-    .btn-primary{background:#5865f2;color:#fff;}
-    .btn-primary:hover{background:#4954e6;transform:translateY(-1px);}
-    .btn-ghost{background:var(--panel-2);border-color:var(--border);color:var(--text);}
-    .btn-ghost:hover{border-color:var(--border-hi);background:rgba(255,255,255,.06);}
+    /* ── RESET ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
 
-    /* floating feature pills */
-    .visual{position:relative;height:340px;}
-    .pill{position:absolute;display:flex;align-items:center;gap:10px;padding:12px 16px;
-      background:rgba(17,19,22,.8);backdrop-filter:blur(10px);border:1px solid var(--border);
-      border-radius:14px;font-family:var(--mono);font-size:.84rem;box-shadow:0 12px 40px rgba(0,0,0,.45);
-      animation:float 6s ease-in-out infinite;}
-    .pill .ico{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;
-      background:var(--panel-2);font-size:.9rem;}
-    .pill.p1{top:10px;left:30px;animation-delay:0s;}
-    .pill.p2{top:90px;right:0;animation-delay:1.2s;}
-    .pill.p3{top:170px;left:0;animation-delay:.6s;}
-    .pill.p4{top:245px;right:40px;animation-delay:1.8s;}
-    @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+    /* ── NAV ─────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5vw;
+      height: 58px;
+      background: rgba(8,9,10,0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -.2px;
+    }
+    .nav-logo-mark {
+      width: 26px; height: 26px;
+      background: var(--accent);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.8rem;
+      list-style: none;
+      align-items: center;
+    }
+    .nav-links a {
+      font-size: .85rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color .18s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--text) !important;
+      color: var(--bg) !important;
+      padding: .4rem .95rem !important;
+      border-radius: 999px !important;
+      font-size: .8rem !important;
+      font-weight: 600 !important;
+      transition: opacity .18s !important;
+    }
+    .nav-cta:hover { opacity: .85 !important; }
 
-    /* STATS */
-    .stats{display:flex;justify-content:center;gap:48px;flex-wrap:wrap;
-      padding:18px 0 50px;text-align:center;}
-    .stat .n{font-size:1.9rem;font-weight:800;letter-spacing:-.02em;}
-    .stat .l{color:var(--muted);font-size:.85rem;margin-top:2px;}
+    /* ── HERO ────────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 9rem 5vw 7rem;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.09);
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .04em;
+      padding: .28rem .8rem;
+      border-radius: 999px;
+      margin-bottom: 2.6rem;
+    }
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #3ba55c;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .35; }
+    }
+    .hero h1 {
+      font-size: clamp(3rem, 7vw, 5.8rem);
+      font-weight: 800;
+      letter-spacing: -3.5px;
+      line-height: 1.03;
+      margin-bottom: 1.8rem;
+      max-width: 15ch;
+      color: var(--text);
+    }
+    .hero h1 .accent-underline {
+      position: relative;
+      white-space: nowrap;
+    }
+    .hero h1 .accent-underline::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      bottom: -.08em;
+      height: .09em;
+      background: var(--accent);
+      border-radius: 999px;
+    }
+    .hero p {
+      font-size: 1.08rem;
+      color: var(--muted);
+      max-width: 44ch;
+      margin-bottom: 3rem;
+      line-height: 1.72;
+    }
+    .hero-btns {
+      display: flex;
+      gap: .7rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-    /* FEATURES */
-    .sec-head{text-align:center;margin:40px 0 34px;}
-    .sec-head h2{font-size:clamp(1.7rem,4vw,2.3rem);font-weight:800;letter-spacing:-.03em;}
-    .sec-head p{color:var(--muted);margin-top:10px;}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding-bottom:70px;}
-    .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:24px;
-      transition:.18s;}
-    .card:hover{border-color:var(--border-hi);background:var(--panel-2);transform:translateY(-3px);}
-    .card .ci{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:1.25rem;
-      background:linear-gradient(135deg,rgba(31,111,92,.35),rgba(31,111,92,.08));
-      border:1px solid var(--border);margin-bottom:16px;}
-    .card h3{font-size:1.08rem;font-weight:700;}
-    .card p{color:var(--muted);font-size:.9rem;margin-top:8px;}
+    /* ── BUTTONS ─────────────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: var(--accent);
+      color: #fff;
+      padding: .7rem 1.5rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: .92rem;
+      transition: transform .14s, box-shadow .14s, opacity .14s;
+      box-shadow: 0 0 30px rgba(124,111,255,.25);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 44px rgba(124,111,255,.45);
+      opacity: .94;
+    }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: rgba(255,255,255,.055);
+      color: var(--text);
+      padding: .7rem 1.5rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: .92rem;
+      border: 1px solid rgba(255,255,255,.1);
+      transition: background .18s, border-color .18s;
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,.09);
+      border-color: rgba(255,255,255,.18);
+    }
 
-    /* CTA */
-    .cta{position:relative;text-align:center;padding:60px 30px;border-radius:24px;margin-bottom:70px;
-      background:linear-gradient(180deg,rgba(31,111,92,.16),rgba(255,255,255,.02));
-      border:1px solid var(--border);overflow:hidden;}
-    .cta h2{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;letter-spacing:-.03em;}
-    .cta p{color:var(--muted);margin:12px auto 26px;max-width:440px;}
+    /* ── STATS LINE ──────────────────────────────────────── */
+    .stats-wrap {
+      text-align: center;
+      padding: 4.5rem 5vw 3rem;
+      border-top: 1px solid var(--border);
+      position: relative;
+      z-index: 1;
+    }
+    .stats-line {
+      font-size: .98rem;
+      color: var(--muted);
+    }
+    .stats-line strong { color: var(--text); font-weight: 700; }
 
-    /* FOOTER */
-    footer{border-top:1px solid var(--border);padding:34px 0;}
-    .foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
-      color:var(--muted);font-size:.88rem;}
-    .foot-links{display:flex;gap:20px;}
-    .foot-links a:hover{color:var(--text);}
+    /* ── SERVER SHOWCASE ─────────────────────────────────── */
+    .servers-row {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-top: 2.6rem;
+      flex-wrap: wrap;
+    }
+    .server-card {
+      display: flex;
+      align-items: center;
+      gap: .85rem;
+    }
+    .server-avatar {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+    .server-name {
+      font-size: .88rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.25;
+    }
+    .server-count {
+      font-size: .76rem;
+      color: var(--muted);
+      margin-top: .08rem;
+    }
 
-    @media(max-width:860px){
-      .nav-links{display:none;}
-      .hero{grid-template-columns:1fr;padding:50px 0 30px;}
-      .visual{display:none;}
-      .grid{grid-template-columns:1fr;}
-      .stats{gap:34px;}
+    /* ── SECTIONS ────────────────────────────────────────── */
+    section { padding: 8rem 5vw; position: relative; z-index: 1; }
+    .section-eyebrow {
+      font-size: .7rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: .75rem;
+    }
+    .section-title {
+      font-size: clamp(1.9rem, 3.5vw, 2.9rem);
+      font-weight: 800;
+      letter-spacing: -1.8px;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: .98rem;
+      max-width: 46ch;
+      margin-bottom: 3.8rem;
+      line-height: 1.72;
+    }
+
+    /* ── FEATURE CARDS ───────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .feat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.9rem;
+      transition: border-color .2s, transform .2s;
+    }
+    .feat-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(124,111,255,.3);
+    }
+    .feat-icon { font-size: 1.55rem; margin-bottom: 1rem; line-height: 1; }
+    .feat-title { font-size: .96rem; font-weight: 600; margin-bottom: .4rem; }
+    .feat-desc { font-size: .86rem; color: var(--muted); line-height: 1.62; }
+
+    /* ── COMMANDS ────────────────────────────────────────── */
+    .commands-section { background: var(--surface); }
+    .cmd-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+      gap: .55rem;
+    }
+    .cmd-pill {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .65rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      transition: border-color .18s;
+    }
+    .cmd-pill:hover { border-color: rgba(124,111,255,.35); }
+    .cmd-name {
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: .79rem;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .cmd-info { font-size: .77rem; color: var(--muted); }
+    code {
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: .79rem;
+      background: rgba(124,111,255,.1);
+      color: var(--accent);
+      padding: .1rem .38rem;
+      border-radius: 5px;
+    }
+
+    /* ── SETUP STEPS ─────────────────────────────────────── */
+    .steps { display: flex; flex-direction: column; gap: 1.8rem; max-width: 600px; }
+    .step { display: flex; gap: 1.2rem; align-items: flex-start; }
+    .step-num {
+      font-size: .8rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(124,111,255,.1);
+      border: 1px solid rgba(124,111,255,.22);
+      border-radius: 10px;
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-text strong {
+      display: block;
+      font-size: .94rem;
+      font-weight: 600;
+      margin-bottom: .25rem;
+    }
+    .step-text span { font-size: .86rem; color: var(--muted); line-height: 1.65; }
+
+    /* ── CTA BANNER ──────────────────────────────────────── */
+    .cta-banner {
+      text-align: center;
+      border-top: 1px solid var(--border);
+      padding: 8rem 5vw;
+      z-index: 1;
+    }
+    .cta-banner h2 {
+      font-size: clamp(1.9rem, 3.5vw, 2.9rem);
+      font-weight: 800;
+      letter-spacing: -1.8px;
+      margin-bottom: .8rem;
+    }
+    .cta-banner p { color: var(--muted); margin-bottom: 2.4rem; font-size: .98rem; }
+
+    /* ── FOOTER ──────────────────────────────────────────── */
+    footer {
+      padding: 2rem 5vw;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+    footer p { font-size: .78rem; color: var(--muted); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { font-size: .78rem; color: var(--muted); transition: color .18s; }
+    .footer-links a:hover { color: var(--text); }
+
+    /* ── RESPONSIVE ──────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .nav-links li:not(:last-child) { display: none; }
+      .hero h1 { letter-spacing: -1.8px; }
+      .servers-row { gap: 1.6rem; }
+      section { padding: 5.5rem 5vw; }
     }
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <nav class="nav">
-      <a href="index.html" class="brand"><img class="logo" src="fraud-website/assets/logo.png" alt="Fraud">Fraud</a>
-      <div class="nav-links">
-        <a href="index.html" class="active">Home</a>
-        <a href="commands.html">Commands</a>
-        <a href="status.html">Status</a>
-        <a href="dashboard.html">Dashboard</a>
-      </div>
-      <a href="https://discord.com/oauth2/authorize?client_id=1515920241631297646&permissions=8&integration_type=0&scope=bot+applications.commands" class="nav-cta" target="_blank" rel="noopener">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3l-.2.5c1.6.4 3 .9 4.3 1.6a16.9 16.9 0 0 0-14.9 0C5.8 4.4 7.2 3.9 8.8 3.5L8.6 3a19.8 19.8 0 0 0-4.9 1.4C1.1 8.3.4 12.1.7 15.8a19.9 19.9 0 0 0 6 3l.8-1.3c-.7-.2-1.3-.5-1.9-.9l.4-.3a14.2 14.2 0 0 0 12 0l.4.3c-.6.4-1.2.7-1.9.9l.8 1.3a19.9 19.9 0 0 0 6-3c.4-4.3-.6-8-3.2-11.4ZM8.9 13.7c-1 0-1.7-.9-1.7-2s.8-2 1.7-2 1.7.9 1.7 2-.8 2-1.7 2Zm6.2 0c-1 0-1.7-.9-1.7-2s.8-2 1.7-2 1.7.9 1.7 2-.7 2-1.7 2Z"/></svg>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-mark">F</div>
+    Fraud
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="commands.html">Commands</a></li>
+    <li><a href="status.html">Status</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li>
+      <a href="https://discord.com/oauth2/authorize?client_id=1515920241631297646&permissions=8&integration_type=0&scope=bot+applications.commands" class="nav-cta" target="_blank" rel="noopener noreferrer">
         Add to Discord
       </a>
-    </nav>
-  </div>
+    </li>
+  </ul>
+</nav>
 
-  <div class="wrap">
-    <section class="hero">
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    Online &amp; Ready
+  </div>
+  <h1>The bot your server<br/><span class="accent-underline">actually deserves.</span></h1>
+  <p>Moderation, economy, gambling, tickets, anti-nuke — all in one bot. Free, fast, and built for your community.</p>
+  <div class="hero-btns">
+    <a href="https://discord.com/oauth2/authorize?client_id=1515920241631297646&permissions=8&integration_type=0&scope=bot+applications.commands" class="btn-primary" target="_blank" rel="noopener noreferrer">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.001.022.015.04.032.05a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+      </svg>
+      Invite to Discord
+    </a>
+    <a href="#features" class="btn-secondary">
+      Explore features
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<!-- STATS + SERVER SHOWCASE -->
+<div class="stats-wrap">
+  <p class="stats-line" id="stats-line">
+    Powering <strong id="stat-users">10,000+</strong> users across <strong id="stat-guilds">500+</strong> communities
+  </p>
+  <div class="servers-row" id="servers-row">
+    <div class="server-card">
+      <div class="server-avatar" id="sv-emoji-0">🔥</div>
       <div>
-        <span class="badge"><span class="dot"></span>1195 commands · 47 categories</span>
-        <h1>Fraud is Discord's <span class="g">premier all-in-one</span> bot</h1>
-        <p class="lead">Moderation, anti-nuke, economy, music, leveling, LastFM and more — everything your community needs, in one fast, reliable bot.</p>
-        <div class="cta-row">
-          <a href="https://discord.com/oauth2/authorize?client_id=1515920241631297646&permissions=8&integration_type=0&scope=bot+applications.commands" class="btn btn-primary" target="_blank" rel="noopener">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5v14"/></svg>
-            Add to Discord
-          </a>
-          <a href="commands.html" class="btn btn-ghost">
-            Browse Commands
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </a>
-        </div>
+        <div class="server-name" id="sv-name-0">Fraud HQ</div>
+        <div class="server-count" id="sv-count-0">Support server</div>
       </div>
-      <div class="visual">
-        <div class="pill p1"><span class="ico">🛡️</span> moderation</div>
-        <div class="pill p2"><span class="ico">🎵</span> music &amp; voice</div>
-        <div class="pill p3"><span class="ico">💰</span> economy</div>
-        <div class="pill p4"><span class="ico">🎧</span> lastfm</div>
-      </div>
-    </section>
-
-    <section class="stats">
-      <div class="stat"><div class="n">1195+</div><div class="l">Commands</div></div>
-      <div class="stat"><div class="n">28</div><div class="l">Categories</div></div>
-      <div class="stat"><div class="n">24/7</div><div class="l">Uptime</div></div>
-      <div class="stat"><div class="n">$</div><div class="l">Prefix</div></div>
-    </section>
-
-    <div class="sec-head">
-      <h2>Everything in one bot</h2>
-      <p>Replace a dozen single-purpose bots with Fraud.</p>
     </div>
-    <section class="grid">
-      <div class="card"><div class="ci">🛡️</div><h3>Moderation</h3><p>Ban, mute, jail, warn, lockdown, purge and a full case-history system — 100+ tools.</p></div>
-      <div class="card"><div class="ci">🔒</div><h3>Anti-Nuke &amp; Raid</h3><p>Protect your server from nukes, raids and mass actions with whitelists and auto-punishment.</p></div>
-      <div class="card"><div class="ci">💰</div><h3>Economy &amp; Games</h3><p>Currency, gambling, daily rewards and interactive games to keep members engaged.</p></div>
-      <div class="card"><div class="ci">🎵</div><h3>Music &amp; VoiceMaster</h3><p>High-quality music playback, audio presets and temporary voice channels.</p></div>
-      <div class="card"><div class="ci">⭐</div><h3>Leveling</h3><p>XP, ranks, leaderboards and role rewards that grow with your community.</p></div>
-      <div class="card"><div class="ci">🎧</div><h3>LastFM &amp; Socials</h3><p>Now-playing cards, charts, plus auto-posting from TikTok, Twitter, Pinterest and more.</p></div>
-    </section>
-
-    <section class="cta">
-      <h2>Ready to upgrade your server?</h2>
-      <p>Add Fraud in seconds and unlock all 1195 commands instantly. No setup required.</p>
-      <a href="https://discord.com/oauth2/authorize?client_id=1515920241631297646&permissions=8&integration_type=0&scope=bot+applications.commands" class="btn btn-primary" target="_blank" rel="noopener">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5v14"/></svg>
-        Add to Discord
-      </a>
-    </section>
+    <div class="server-card">
+      <div class="server-avatar" id="sv-emoji-1">👑</div>
+      <div>
+        <div class="server-name" id="sv-name-1">The Hangout</div>
+        <div class="server-count" id="sv-count-1">12,400 members</div>
+      </div>
+    </div>
+    <div class="server-card">
+      <div class="server-avatar" id="sv-emoji-2">⚡</div>
+      <div>
+        <div class="server-name" id="sv-name-2">Chill Zone</div>
+        <div class="server-count" id="sv-count-2">8,200 members</div>
+      </div>
+    </div>
+    <div class="server-card">
+      <div class="server-avatar" id="sv-emoji-3">🎮</div>
+      <div>
+        <div class="server-name" id="sv-name-3">Gamer Hub</div>
+        <div class="server-count" id="sv-count-3">5,800 members</div>
+      </div>
+    </div>
   </div>
+</div>
 
-  <footer>
-    <div class="wrap foot">
-      <a href="index.html" class="brand" style="text-decoration:none;color:inherit;"><img class="logo" src="fraud-website/assets/logo.png" alt="Fraud">Fraud</a>
-      <div class="foot-links">
-        <a href="commands.html">Commands</a>
-        <a href="status.html">Status</a>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="https://discord.com/oauth2/authorize?client_id=1515920241631297646&permissions=8&integration_type=0&scope=bot+applications.commands" target="_blank" rel="noopener">Invite</a>
-      </div>
-      <div>© 2026 Fraud</div>
+<!-- FEATURES -->
+<section id="features">
+  <p class="section-eyebrow">What it does</p>
+  <h2 class="section-title">Everything your server needs.</h2>
+  <p class="section-sub">From first-join to last-ban, one bot handles it all — with zero monthly fees.</p>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">🛡️</div>
+      <div class="feat-title">Moderation</div>
+      <p class="feat-desc">Ban, kick, mute, warn, purge, lock channels and more. Full audit trail kept per user.</p>
     </div>
-  </footer>
+    <div class="feat-card">
+      <div class="feat-icon">💰</div>
+      <div class="feat-title">Economy</div>
+      <p class="feat-desc">Wallet, bank, daily rewards, work shifts, leaderboards, and robbing other members.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🎰</div>
+      <div class="feat-title">Gambling</div>
+      <p class="feat-desc">Slots, coinflip, and full interactive blackjack — all with real economy stakes.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🎫</div>
+      <div class="feat-title">Tickets</div>
+      <p class="feat-desc">One-click ticket panels with private channels, staff access, and close buttons.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔒</div>
+      <div class="feat-title">Anti-Nuke</div>
+      <p class="feat-desc">Auto-bans users who mass-delete channels/roles or mass-ban in a short window.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🚨</div>
+      <div class="feat-title">Anti-Raid</div>
+      <p class="feat-desc">Detects mass join events and kicks new accounts during raid attempts automatically.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">👋</div>
+      <div class="feat-title">Welcome Messages</div>
+      <p class="feat-desc">Custom join/leave embeds with <code>{user}</code>, <code>{server}</code>, and <code>{count}</code> variables.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🎭</div>
+      <div class="feat-title">Auto-Roles</div>
+      <p class="feat-desc">Automatically assign roles when someone joins. Stack as many roles as you need.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🎉</div>
+      <div class="feat-title">Fun &amp; Social</div>
+      <p class="feat-desc">8-ball, ship, RPS, truth or dare, GIF reactions — keep your community entertained.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMMANDS -->
+<section id="commands" class="commands-section">
+  <p class="section-eyebrow">Command list</p>
+  <h2 class="section-title">160+ commands, one prefix.</h2>
+  <p class="section-sub">Everything starts with <code>$</code>. Type <code>$help</code> in Discord for the full list.</p>
+  <div class="cmd-grid">
+    <div class="cmd-pill"><span class="cmd-name">$ban</span><span class="cmd-info">Ban a member</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$kick</span><span class="cmd-info">Kick a member</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$mute</span><span class="cmd-info">Timeout a member</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$warn</span><span class="cmd-info">Warn a member</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$purge</span><span class="cmd-info">Delete messages</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$lock</span><span class="cmd-info">Lock a channel</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$balance</span><span class="cmd-info">View wallet &amp; bank</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$daily</span><span class="cmd-info">Claim daily reward</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$work</span><span class="cmd-info">Earn coins</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$slots</span><span class="cmd-info">Play slots</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$blackjack</span><span class="cmd-info">Play blackjack</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$coinflip</span><span class="cmd-info">Flip for coins</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$rob</span><span class="cmd-info">Rob a member</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$leaderboard</span><span class="cmd-info">Richest members</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$ticketsetup</span><span class="cmd-info">Create ticket panel</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$antinuke</span><span class="cmd-info">Toggle protection</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$antiraid</span><span class="cmd-info">Toggle raid guard</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$autorole</span><span class="cmd-info">Auto-assign roles</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$setwelcome</span><span class="cmd-info">Set welcome msg</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$8ball</span><span class="cmd-info">Ask the 8-ball</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$ship</span><span class="cmd-info">Compatibility check</span></div>
+    <div class="cmd-pill"><span class="cmd-name">$snipe</span><span class="cmd-info">Snipe deleted msgs</span></div>
+  </div>
+  <div style="margin-top:2.4rem;">
+    <a href="commands.html" class="btn-secondary" style="display:inline-flex;align-items:center;gap:.5rem;">
+      Browse all 160+ commands
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- SETUP -->
+<section id="setup">
+  <p class="section-eyebrow">Getting started</p>
+  <h2 class="section-title">Up and running in minutes.</h2>
+  <p class="section-sub">No dashboard needed. Just invite and configure from Discord.</p>
+  <div class="steps">
+    <div class="step">
+      <span class="step-num">1</span>
+      <div class="step-text">
+        <strong>Create a bot on Discord</strong>
+        <span>Go to <code>discord.com/developers/applications</code>, create a new application, and add a bot. Enable all Privileged Intents.</span>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num">2</span>
+      <div class="step-text">
+        <strong>Grab your token &amp; invite the bot</strong>
+        <span>Copy your bot token from the Bot tab. Generate an invite URL with <code>Administrator</code> permissions and add the bot to your server.</span>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num">3</span>
+      <div class="step-text">
+        <strong>Install dependencies &amp; run</strong>
+        <span>Run <code>pip install discord.py</code> then <code>python bot.py</code>. Your bot is live.</span>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num">4</span>
+      <div class="step-text">
+        <strong>Configure in Discord</strong>
+        <span>Use <code>$setwelcome</code>, <code>$ticketsetup</code>, <code>$antinuke enable</code>, and <code>$autorole add</code> to set up your server.</span>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num">5</span>
+      <div class="step-text">
+        <strong>Host it 24/7 for free</strong>
+        <span>Deploy on Railway, Replit, or Oracle Cloud free tier so your bot stays online around the clock.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-banner">
+  <h2>Ready to power up your server?</h2>
+  <p>Free forever. No credit card. No limits.</p>
+  <a href="https://discord.com/oauth2/authorize?client_id=1515920241631297646&permissions=8&integration_type=0&scope=bot+applications.commands" class="btn-primary" target="_blank" rel="noopener noreferrer">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.001.022.015.04.032.05a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+    </svg>
+    Add to Discord
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 Fraud — Built by @rpjq with discord.py</p>
+  <div class="footer-links">
+    <a href="https://github.com/mylinfrm810/Fraud">GitHub</a>
+    <a href="https://discord.gg/Xwsg7M2BNa">Support Server</a>
+    <a href="#features">Features</a>
+  </div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.07 });
+
+  document.querySelectorAll('.feat-card, .cmd-pill, .step, .server-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(18px)';
+    el.style.transition = 'opacity .45s ease, transform .45s ease';
+    observer.observe(el);
+  });
+
+  // ── Live stats from bot ────────────────────────────────────────────
+  function svInitials(name) {
+    const words = name.replace(/[^\w\s]/g, ' ').trim().split(/\s+/).filter(Boolean);
+    if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+    if (name.length >= 2)  return name.slice(0, 2).toUpperCase();
+    return (name[0] || '?').toUpperCase();
+  }
+  function svColor(name) {
+    const palette = ['#7c6fff','#3ba55c','#f0b429','#ed4245','#5865f2','#00b2ff','#e67e22','#9b59b6'];
+    let h = 0;
+    for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+    return palette[h % palette.length];
+  }
+
+  (async () => {
+    try {
+      const res = await fetch('/api/stats', { signal: AbortSignal.timeout(4000) });
+      if (!res.ok) return;
+      const data = await res.json();
+
+      // Stats line
+      const fmt = n => n >= 1000000
+        ? (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M+'
+        : n >= 1000 ? Math.floor(n / 1000) + 'K+' : String(n);
+
+      if (data.member_count != null) {
+        const el = document.getElementById('stat-users');
+        if (el) el.textContent = fmt(data.member_count);
+      }
+      if (data.guild_count != null) {
+        const el = document.getElementById('stat-guilds');
+        if (el) el.textContent = fmt(data.guild_count);
+      }
+
+      // Server cards — show only real servers, hide the rest
+      const servers = data.top_servers || [];
+      for (let i = 0; i < 4; i++) {
+        const card = document.querySelector('.server-card:nth-child(' + (i + 1) + ')');
+        if (!card) continue;
+        const sv = servers[i];
+        if (!sv) {
+          card.style.display = 'none';
+          continue;
+        }
+        // Avatar: real icon when available, initials fallback
+        const avatarEl = document.getElementById('sv-emoji-' + i);
+        if (avatarEl) {
+          if (sv.icon_url) {
+            avatarEl.textContent = '';
+            avatarEl.style.background = 'var(--card)';
+            avatarEl.style.border = '1px solid var(--border)';
+            avatarEl.style.padding = '0';
+            avatarEl.style.overflow = 'hidden';
+            const img = document.createElement('img');
+            img.src = sv.icon_url;
+            img.alt = sv.name;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = '50%';
+            img.onerror = () => {
+              avatarEl.removeChild(img);
+              avatarEl.textContent = svInitials(sv.name);
+              avatarEl.style.background = svColor(sv.name);
+              avatarEl.style.color = '#fff';
+              avatarEl.style.fontSize = '.78rem';
+              avatarEl.style.fontWeight = '700';
+              avatarEl.style.letterSpacing = '.03em';
+              avatarEl.style.border = 'none';
+              avatarEl.style.padding = '';
+              avatarEl.style.overflow = '';
+            };
+            avatarEl.appendChild(img);
+          } else {
+            avatarEl.textContent = svInitials(sv.name);
+            avatarEl.style.background = svColor(sv.name);
+            avatarEl.style.color = '#fff';
+            avatarEl.style.fontSize = '.78rem';
+            avatarEl.style.fontWeight = '700';
+            avatarEl.style.letterSpacing = '.03em';
+            avatarEl.style.border = 'none';
+          }
+        }
+        const nameEl  = document.getElementById('sv-name-'  + i);
+        const countEl = document.getElementById('sv-count-' + i);
+        if (nameEl)  nameEl.textContent  = sv.name;
+        if (countEl) countEl.textContent = sv.member_count != null
+          ? sv.member_count.toLocaleString() + ' members'
+          : '—';
+      }
+    } catch (_) {
+      // Silently keep placeholder values on any error
+    }
+  })();
+</script>
 </body>
 </html>
